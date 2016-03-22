@@ -95,7 +95,6 @@
     <ClCompile Include="Processor_unitTest.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="ThreadPoolSingleton_unitTest.cpp" />
-    <ClCompile Include="UnitTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DevelopmentProject\DevelopmentProject.vcxproj">
