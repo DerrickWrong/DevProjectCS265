@@ -37,10 +37,10 @@ public:
 		//create directory if not exist else read all files from directory
 		std::wstring stemp = std::wstring(filedir.begin(), filedir.end()); 
 
-		if (CreateDirectory(stemp.c_str(), NULL))
-		{
+		//if (CreateDirectory(stemp.c_str(), NULL))
+		//{
 			// Directory created
-		} 
+		//} 
 	};
 
 	Merger(std::string fdir) : Merger(1000, 2, fdir, MergeType::ONBOARD)  {};
