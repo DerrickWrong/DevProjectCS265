@@ -13,6 +13,14 @@ enum MergeType {
 	DEVICE
 };
 
+template<class T, class R> struct comp{
+
+	bool operator()(const T *a, const T *b) const 
+	{
+		return a < b;
+	}
+};
+
 template<class T, class R>
 class Merger {
 
@@ -20,7 +28,7 @@ private:
 	int level, ratio;
 	std::string fileDir;
 	
-	std::map<T, Request<T, R>> C0;
+	std::map<T, Request<T, R>, comp<T, R>> C0;
 
 	MergeType type;
 
@@ -37,10 +45,16 @@ public:
 		//create directory if not exist else read all files from directory
 		std::wstring stemp = std::wstring(filedir.begin(), filedir.end()); 
 
-		//if (CreateDirectory(stemp.c_str(), NULL))
-		//{
+		DWORD dwAttrib = GetFileAttributes(stemp.c_str());
+
+		bool fileExist = (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+
+
+		if (fileExist == false)
+		{
 			// Directory created
-		//} 
+			CreateDirectory(stemp.c_str(), NULL);
+		} 
 	};
 
 	Merger(std::string fdir) : Merger(1000, 2, fdir, MergeType::ONBOARD)  {};
@@ -62,7 +76,6 @@ public:
 		
 		//read every single file on disk 
 
-
 	};
 
 	/*
@@ -70,7 +83,12 @@ public:
 	*/
 	void merge() {
 		
-		//check and see if the cache is full
+		if (this->type == MergeType::DEVICE){
+			
+		}
+		else{
+			
+		}
 
 	};
 
