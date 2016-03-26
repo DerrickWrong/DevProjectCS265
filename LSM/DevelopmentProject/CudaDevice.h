@@ -3,6 +3,7 @@
 
 #include <map> 
 #include "Request.h"
+#include <cstdlib>
 
 template<typename T, typename P>
 class __declspec(dllexport)  CudaDevice{

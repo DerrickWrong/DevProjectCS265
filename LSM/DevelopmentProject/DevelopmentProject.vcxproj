@@ -159,6 +159,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="BloomFilter.h" />
     <ClInclude Include="Broadcaster.h" />
     <ClInclude Include="CudaDevice.h" />
+    <ClInclude Include="FileAccessor.h" />
     <ClInclude Include="Merger.h" />
     <ClInclude Include="Predicate.h" />
     <ClInclude Include="Processor.h" />

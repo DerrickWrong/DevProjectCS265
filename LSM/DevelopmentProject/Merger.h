@@ -7,6 +7,7 @@
 #include "Request.h"
 #include <stdio.h>
 #include <Windows.h>
+#include "CudaDevice.h"
 
 enum MergeType {
 	ONBOARD,
@@ -32,6 +33,8 @@ private:
 
 	MergeType type;
 
+	CudaDevice<T, R> *device;
+
 public:
 	 
 	/*
@@ -55,9 +58,22 @@ public:
 			// Directory created
 			CreateDirectory(stemp.c_str(), NULL);
 		} 
+
+		this->device = new CudaDevice<T, R>();
+
 	};
 
-	Merger(std::string fdir) : Merger(1000, 2, fdir, MergeType::ONBOARD)  {};
+	/*
+	* Overload of constructor
+	*/
+	Merger(std::string fdir) : Merger(1024, 2, fdir, MergeType::ONBOARD)  {};
+
+	/*
+	* Destructor 
+	*/
+	~Merger(){
+		delete this->device;
+	};
 
 	/*
 	* Process all insert, update and delete requests
@@ -82,14 +98,13 @@ public:
 	* Check C0 tree and see if it should be merged or save to disk
 	*/
 	void merge() {
-		
-		if (this->type == MergeType::DEVICE){
+
+		if (this->type == MergeType::DEVICE && this->device->isCudaAvailable()){
 			
 		}
 		else{
 			
 		}
-
 	};
 
 };

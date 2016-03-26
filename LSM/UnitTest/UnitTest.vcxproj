@@ -153,6 +153,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CPUMergeUnitTest.cpp" />
+    <ClCompile Include="DeviceMergeUnitTest.cpp" />
+    <ClCompile Include="TestFile.cpp" />
     <ClCompile Include="TestMerger.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
