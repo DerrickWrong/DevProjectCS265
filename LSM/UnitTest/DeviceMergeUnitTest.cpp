@@ -1,6 +1,7 @@
 #include "gtest\gtest.h" 
 #include "Request.h"
 #include "CudaDevice.h" 
+#include "Merger.h"
 
 int *generate(int size, int val){
 
@@ -27,85 +28,113 @@ Request<int, int> *generateArr(int size, int offset){
 }
 
 TEST(GPUTest, Merge1024Test){
-
-	CudaDevice<int, int> cuDev;
+	 
 	int size = 1024;
 
 	Request<int, int> *arrA = generateArr(size, 10);
 	Request<int, int> *arrB = generateArr(size, 0);
-	int *idx = generate(size, 1);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
 
-	cuDev.mergeKernel(arrB, arrA, idx, size);
+	merger.mergeGPU(arrB, arrA, size, sol);
 
-	delete idx;
 	delete arrA;
 	delete arrB;
+	delete sol;
 }
 
-//2 times of 1024 workload
+TEST(GPUTest, Merge1024_TestTwo){
+
+	int size = 1024;
+
+	Request<int, int> *arrA = generateArr(size, 10);
+	Request<int, int> *arrB = generateArr(size, 0);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
+
+	merger.mergeGPU(arrB, arrA, size, sol);
+
+	delete arrA;
+	delete arrB;
+	delete sol;
+}
+
 TEST(GPUTest, Merge2048Test){
 
-	CudaDevice<int, int> cuDev;
 	int size = 2048;
 
 	Request<int, int> *arrA = generateArr(size, 10);
 	Request<int, int> *arrB = generateArr(size, 0);
-	int *idx = generate(size, 1);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
 
-	cuDev.mergeKernel(arrB, arrA, idx, size);
+	merger.mergeGPU(arrB, arrA, size, sol);
 
-	delete idx;
 	delete arrA;
 	delete arrB;
+	delete sol;
 }
 
-//4 times of 1024 workload
 TEST(GPUTest, Merge4096Test){
 
-	CudaDevice<int, int> cuDev;
 	int size = 4096;
 
 	Request<int, int> *arrA = generateArr(size, 10);
 	Request<int, int> *arrB = generateArr(size, 0);
-	int *idx = generate(size, 1);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
 
-	cuDev.mergeKernel(arrB, arrA, idx, size);
+	merger.mergeGPU(arrB, arrA, size, sol);
 
-	delete idx;
 	delete arrA;
 	delete arrB;
+	delete sol;
 }
 
-//10 times of 1024 workload
 TEST(GPUTest, Merge102400Test){
 
-	CudaDevice<int, int> cuDev;
 	int size = 102400;
 
 	Request<int, int> *arrA = generateArr(size, 10);
 	Request<int, int> *arrB = generateArr(size, 0);
-	int *idx = generate(size, 1);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
 
-	cuDev.mergeKernel(arrB, arrA, idx, size);
+	merger.mergeGPU(arrB, arrA, size, sol);
 
-	delete idx;
 	delete arrA;
 	delete arrB;
+	delete sol;
 }
 
-//100 times of 1024 workload
-TEST(GPUTest, Merge10240000Test){
+TEST(GPUTest, Merge204800Test){
 
-	CudaDevice<int, int> cuDev;
-	int size = 10240000;
+	int size = 204800;
 
 	Request<int, int> *arrA = generateArr(size, 10);
 	Request<int, int> *arrB = generateArr(size, 0);
-	int *idx = generate(size, 1);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
 
-	cuDev.mergeKernel(arrB, arrA, idx, size);
+	merger.mergeGPU(arrB, arrA, size, sol);
 
-	delete idx;
 	delete arrA;
 	delete arrB;
+	delete sol;
+}
+
+TEST(GPUTest, Merge409600Test){
+
+	int size = 409600;
+
+	Request<int, int> *arrA = generateArr(size, 10);
+	Request<int, int> *arrB = generateArr(size, 0);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
+
+	merger.mergeGPU(arrB, arrA, size, sol);
+
+	delete arrA;
+	delete arrB;
+	delete sol;
 }

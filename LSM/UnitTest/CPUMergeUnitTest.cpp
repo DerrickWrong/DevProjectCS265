@@ -33,28 +33,30 @@ TEST(CPUTest, Merge1024Test){
 
 	Request<int, int> *arrA = generateArrCPU(size, 10);
 	Request<int, int> *arrB = generateArrCPU(size, 0);
-
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	std::vector<Request<int, int>> sirt = merger.mergeCPU(arrA, arrB, size);
+	merger.mergeCPU(arrA, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
+	delete sol;
 }
-
+ 
 TEST(CPUTest, Merge2048Test){
 
 	int size = 2048;
 
 	Request<int, int> *arrA = generateArrCPU(size, 10);
 	Request<int, int> *arrB = generateArrCPU(size, 0);
-
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	std::vector<Request<int, int>> sirt = merger.mergeCPU(arrA, arrB, size);
+	merger.mergeCPU(arrA, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
+	delete sol;
 }
 
 TEST(CPUTest, Merge4096Test){
@@ -63,13 +65,14 @@ TEST(CPUTest, Merge4096Test){
 
 	Request<int, int> *arrA = generateArrCPU(size, 10);
 	Request<int, int> *arrB = generateArrCPU(size, 0);
-
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	std::vector<Request<int, int>> sirt = merger.mergeCPU(arrA, arrB, size);
+	merger.mergeCPU(arrA, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
+	delete sol;
 }
 
 TEST(CPUTest, Merge102400Test){
@@ -78,26 +81,45 @@ TEST(CPUTest, Merge102400Test){
 
 	Request<int, int> *arrA = generateArrCPU(size, 10);
 	Request<int, int> *arrB = generateArrCPU(size, 0);
-
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	std::vector<Request<int, int>> sirt = merger.mergeCPU(arrA, arrB, size);
+	merger.mergeCPU(arrA, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
+	delete sol;
 }
 
-TEST(CPUTest, Merge10240000Test){
 
-	int size = 10240000;
+TEST(CPUTest, Merge204800Test){
+
+	int size = 204800;
 
 	Request<int, int> *arrA = generateArrCPU(size, 10);
 	Request<int, int> *arrB = generateArrCPU(size, 0);
-
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	std::vector<Request<int, int>> sirt = merger.mergeCPU(arrA, arrB, size);
+	merger.mergeCPU(arrA, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
+	delete sol;
+}
+
+TEST(CPUTest, Merge409600Test){
+
+	int size = 409600;
+
+	Request<int, int> *arrA = generateArrCPU(size, 10);
+	Request<int, int> *arrB = generateArrCPU(size, 0);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
+
+	merger.mergeCPU(arrA, arrB, size, sol);
+
+	delete arrA;
+	delete arrB;
+	delete sol;
 }

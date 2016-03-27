@@ -114,24 +114,66 @@ public:
 	/*
 	* CPU merge version
 	*/
-	std::vector<Request<T, R>> mergeCPU(Request<T, R> *arrA, Request<T, R> *arrB, int size){
+	void mergeCPU(Request<T, R> *arrA, Request<T, R> *arrB, int size, Request<T, R> *mergedArray){
 		
+		int msize = size * 2;
+
 		std::vector<Request<T, R>> vec;
 
+		//store to container
 		for (int i = 0; i < size; i++){
 			vec.push_back(arrA[i]);
 			vec.push_back(arrB[i]);
 		}
 		 
-		  
+		//apply sort  
 		std::sort(vec.begin(), vec.end(), [](Request<T, R> a, Request<T, R> b){
 			
 			return a.getKey() < b.getKey();
 
 		});
 
-		return vec;
+		int counter = 0;
+		
+		//write data to array
+		while (counter < msize){
+			mergedArray[counter] = vec.front();
+			vec.pop_back();
+			counter++;
+		}
+		 
 	};
+
+	/*
+	* GPU merge version
+	*/
+	void mergeGPU(Request<T, R> *arrA, Request<T, R> *arrB, int size, Request<T, R> *mergedArray){
+	
+		//create index for A
+		int *idxA = new int[size];
+		int *idxB = new int[size];
+		
+		for (int i = 0; i < size; i++){
+			idxA[i] = i;
+			idxB[i] = i;
+		}
+
+		//invoke merge kernel to find A respective to B
+		this->device->mergeKernel(arrA, arrB, idxB, size);
+		this->device->mergeKernel(arrB, arrA, idxA, size);
+
+
+		//place merged item into an array
+		for (int i = 0; i < size; i++){
+			mergedArray[idxA[i]] = arrA[i];
+			mergedArray[idxB[i]] = arrB[i];
+		}
+
+		//free resource and return sorted vector
+		delete idxA;
+		delete idxB;
+	};
+
 
 };
 

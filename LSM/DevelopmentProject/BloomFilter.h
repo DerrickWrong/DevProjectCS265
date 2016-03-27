@@ -7,6 +7,7 @@
 #include <map>
 #include <queue>
 #include <functional>
+#include <fstream>
 
 /*
 * Comparator ensure the map is sorted from smaller range to large range
@@ -38,24 +39,42 @@ class BloomFilter {
 
 private: 
 	std::map<std::pair<T, T>, std::string, comparator<T>> fileMap;
+	std::map<std::string, long> fileSizes;
 public:
 	BloomFilter() {};
 
 	/*
 	* get file map by reference
 	*/
-	std::map<std::pair<T, T>, std::string, comparator<T>>& getMap() {
+	std::map<std::pair<T, T>, std::string, comparator<T>>& getFileMap() {
 		
 		return this->fileMap;
 
 	};
 
 	/*
+	* Get file size
+	*/
+	std::map<std::string, long>& getFileSizeMap(){
+		return this->fileSizes;
+	};
+
+
+	/*
 	* update file map file into file queue
 	*/
 	void update(T lower, T upper, std::string path) {
 
-		this->fileMap[std::make_pair(lower, upper)] = path;
+		std::pair<T, T> p = std::make_pair(lower, upper);
+		this->fileMap[p] = path;
+		 
+		std::ifstream myfile(path, std::ios::in | std::ios::binary | std::ios::ate);
+		
+		if (myfile.is_open()){
+			this->fileSizes[path] = (long)myfile.tellg();
+			myfile.close();
+		} 
+		 
 	}
 
 	/*
@@ -63,7 +82,10 @@ public:
 	*/
 	void remove(T lower, T upper) 
 	{
-		this->fileMap.erase(std::make_pair(lower, upper));
+		std::pair<T, T> p = std::make_pair(lower, upper);
+		std::string file = this->fileMap[p];
+		this->fileSizes.erase(file);
+		this->fileMap.erase(p);
 	}
 
 };
