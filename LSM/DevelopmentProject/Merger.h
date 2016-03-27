@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <Windows.h>
 #include "CudaDevice.h"
+#include <vector>
+#include <algorithm>
 
 enum MergeType {
 	ONBOARD,
@@ -105,6 +107,30 @@ public:
 		else{
 			
 		}
+	};
+
+	
+
+	/*
+	* CPU merge version
+	*/
+	std::vector<Request<T, R>> mergeCPU(Request<T, R> *arrA, Request<T, R> *arrB, int size){
+		
+		std::vector<Request<T, R>> vec;
+
+		for (int i = 0; i < size; i++){
+			vec.push_back(arrA[i]);
+			vec.push_back(arrB[i]);
+		}
+		 
+		  
+		std::sort(vec.begin(), vec.end(), [](Request<T, R> a, Request<T, R> b){
+			
+			return a.getKey() < b.getKey();
+
+		});
+
+		return vec;
 	};
 
 };

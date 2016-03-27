@@ -52,6 +52,10 @@ public:
 		return this->type;
 	}
 
+	int getSize(){
+		return sizeof(T) + sizeof(P);
+	}
+
 private:
 	long timestamp;
 	T key;

@@ -1,5 +1,7 @@
 #include "gtest\gtest.h" 
 #include "Request.h"  
+#include "Merger.h"
+#include <vector>
 
 int *generateCPU(int size, int val){
 
@@ -32,20 +34,70 @@ TEST(CPUTest, Merge1024Test){
 	Request<int, int> *arrA = generateArrCPU(size, 10);
 	Request<int, int> *arrB = generateArrCPU(size, 0);
 
-	Request<int, int> *allArray = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
 
-	int cidx = size;
-
-	//combine two arrays
-	for (int i = 0; i < size; i++){
-
-		allArray[i] = std::move(arrA[i]);
-		allArray[cidx] = std::move(arrB[i]);
-		cidx = cidx + 1;
-	}
+	std::vector<Request<int, int>> sirt = merger.mergeCPU(arrA, arrB, size);
 
 	delete arrA;
 	delete arrB;
+}
 
-	delete allArray;
+TEST(CPUTest, Merge2048Test){
+
+	int size = 2048;
+
+	Request<int, int> *arrA = generateArrCPU(size, 10);
+	Request<int, int> *arrB = generateArrCPU(size, 0);
+
+	Merger<int, int> merger("D:\\LSM");
+
+	std::vector<Request<int, int>> sirt = merger.mergeCPU(arrA, arrB, size);
+
+	delete arrA;
+	delete arrB;
+}
+
+TEST(CPUTest, Merge4096Test){
+
+	int size = 4096;
+
+	Request<int, int> *arrA = generateArrCPU(size, 10);
+	Request<int, int> *arrB = generateArrCPU(size, 0);
+
+	Merger<int, int> merger("D:\\LSM");
+
+	std::vector<Request<int, int>> sirt = merger.mergeCPU(arrA, arrB, size);
+
+	delete arrA;
+	delete arrB;
+}
+
+TEST(CPUTest, Merge102400Test){
+
+	int size = 102400;
+
+	Request<int, int> *arrA = generateArrCPU(size, 10);
+	Request<int, int> *arrB = generateArrCPU(size, 0);
+
+	Merger<int, int> merger("D:\\LSM");
+
+	std::vector<Request<int, int>> sirt = merger.mergeCPU(arrA, arrB, size);
+
+	delete arrA;
+	delete arrB;
+}
+
+TEST(CPUTest, Merge10240000Test){
+
+	int size = 10240000;
+
+	Request<int, int> *arrA = generateArrCPU(size, 10);
+	Request<int, int> *arrB = generateArrCPU(size, 0);
+
+	Merger<int, int> merger("D:\\LSM");
+
+	std::vector<Request<int, int>> sirt = merger.mergeCPU(arrA, arrB, size);
+
+	delete arrA;
+	delete arrB;
 }
