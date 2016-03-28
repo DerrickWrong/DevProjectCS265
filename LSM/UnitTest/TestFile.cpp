@@ -4,6 +4,9 @@
 #include <string>
 #include <stdio.h>
 
+#include <map>
+#include <functional>
+
 int *generateFile(int size, int val){
 
 	int *ptr = new int[size];
@@ -28,11 +31,11 @@ Request<int, int> *generateArrFile(int size, int offset){
 	return ptr;
 }
 
-/*
-TEST(FileTest, testWrite){
+
+TEST(IOTest, testWrite_1024){
 	 
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_1000";
+	std::string filename = "0_1024";
 	int dataSize = 1024;
 
 	FileAccessor<int, int> fa(baseFolder);
@@ -45,55 +48,133 @@ TEST(FileTest, testWrite){
  
 }
 
+TEST(IOTest, testWrite_2048){
 
-TEST(FileTest, testIO){
-	  
-	FILE *pfile;
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_2048";
+	int dataSize = 2048;
 
-	int totalSize = 4096;
-	int keyValue = (sizeof(int) + sizeof(int));
-	int bufferSize = totalSize / keyValue;
+	FileAccessor<int, int> fa(baseFolder);
 
-	char *buffer = new char[bufferSize];
+	Request<int, int> *dummy = generateArrFile(dataSize, 0);
 
-	buffer[0] = 'h';
-	buffer[1] = 'e';
-	buffer[2] = 'l';
-	buffer[3] = 'l';
-	buffer[4] = 'o';
-	buffer[5] = ' ';
-	buffer[6] = 'w';
-	buffer[7] = 'o';
-	buffer[8] = 'r';
-	buffer[9] = 'l';
-	buffer[10] = 'd';
+	fa.writeFile(filename, dummy, dataSize);
 
-	pfile = fopen("D:\\LSM\\bah.bin", "w+b");
+	delete dummy;
 
-	fwrite(buffer, keyValue, bufferSize, pfile);
-
-	fclose(pfile);
-
-	delete buffer;
-
-	buffer = new char[bufferSize];
-
-	pfile = fopen("D:\\LSM\\bah.bin", "rb");
-
-	fread(buffer, keyValue, bufferSize, pfile);
-
-	std::cout << "buffer " << buffer[0] << std::endl;
-	std::cout << "buffer " << buffer[1] << std::endl;
-	std::cout << "buffer " << buffer[2] << std::endl;
-	std::cout << "buffer " << buffer[3] << std::endl;
-	std::cout << "buffer " << buffer[4] << std::endl;
-	std::cout << "buffer " << buffer[5] << std::endl;
-	std::cout << "buffer " << buffer[6] << std::endl;
-	std::cout << "buffer " << buffer[7] << std::endl;
-	std::cout << "buffer " << buffer[8] << std::endl;
-	std::cout << "buffer " << buffer[9] << std::endl;
-	std::cout << "buffer " << buffer[10] << std::endl; 
-
-	delete buffer;
 }
-*/
+
+TEST(IOTest, testWrite_4096){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_4096";
+	int dataSize = 4096;
+
+	FileAccessor<int, int> fa(baseFolder);
+
+	Request<int, int> *dummy = generateArrFile(dataSize, 0);
+
+	fa.writeFile(filename, dummy, dataSize);
+
+	delete dummy;
+
+}
+
+TEST(IOTest, testWrite_102400){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_102400";
+	int dataSize = 102400;
+
+	FileAccessor<int, int> fa(baseFolder);
+
+	Request<int, int> *dummy = generateArrFile(dataSize, 0);
+
+	fa.writeFile(filename, dummy, dataSize);
+
+	delete dummy;
+
+}
+
+TEST(IOTest, testWrite_1024000){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_1024000";
+	int dataSize = 1024000;
+
+	FileAccessor<int, int> fa(baseFolder);
+
+	Request<int, int> *dummy = generateArrFile(dataSize, 0);
+
+	fa.writeFile(filename, dummy, dataSize);
+
+	delete dummy;
+
+}
+ 
+/********************************************************READ TEST ********************************************/
+
+TEST(IOTest, testRead_1024){
+	  
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_1024";
+	FileAccessor<int, int> fa(baseFolder);
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
+
+	fa.readFile(filename, m);
+	ASSERT_EQ(m.size(), 1024); 
+}
+
+TEST(IOTest, testRead_2048){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_2048";
+	FileAccessor<int, int> fa(baseFolder);
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
+
+	fa.readFile(filename, m);
+	ASSERT_EQ(m.size(), 2048);
+}
+
+TEST(IOTest, testRead_4096){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_4096";
+	FileAccessor<int, int> fa(baseFolder);
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
+
+	fa.readFile(filename, m);
+	ASSERT_EQ(m.size(), 4096);
+}
+
+TEST(IOTest, testRead_102400){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_102400";
+	FileAccessor<int, int> fa(baseFolder);
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
+
+	fa.readFile(filename, m);
+	ASSERT_EQ(m.size(), 102400);
+}
+
+TEST(IOTest, testRead_1024000){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_1024000";
+	FileAccessor<int, int> fa(baseFolder);
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
+
+	fa.readFile(filename, m);
+	ASSERT_EQ(m.size(), 1024000);
+}

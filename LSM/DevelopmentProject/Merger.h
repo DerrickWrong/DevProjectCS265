@@ -8,22 +8,14 @@
 #include <stdio.h>
 #include <Windows.h>
 #include "CudaDevice.h"
-#include <vector>
-#include <algorithm>
+#include <vector> 
+#include <functional>
 
 enum MergeType {
 	ONBOARD,
 	DEVICE
 };
-
-template<class T, class R> struct comp{
-
-	bool operator()(const T *a, const T *b) const 
-	{
-		return a < b;
-	}
-};
-
+ 
 template<class T, class R>
 class Merger {
 
@@ -31,7 +23,7 @@ private:
 	int level, ratio;
 	std::string fileDir;
 	
-	std::map<T, Request<T, R>, comp<T, R>> C0;
+	std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>> C0;
 
 	MergeType type;
 

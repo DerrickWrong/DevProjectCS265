@@ -17,8 +17,8 @@ public:
 	*/
 	__host__ __device__ Request(long timestamp, T key, P value) {
 		this->timestamp = timestamp;
-		this->type = type;
 		this->key = key;
+		this->value = value;
 		this->type = INSERT;
 	}
 
@@ -50,11 +50,7 @@ public:
 
 	__host__ __device__ RequestType getType() {
 		return this->type;
-	}
-
-	int getSize(){
-		return sizeof(T) + sizeof(P);
-	}
+	} 
 
 private:
 	long timestamp;

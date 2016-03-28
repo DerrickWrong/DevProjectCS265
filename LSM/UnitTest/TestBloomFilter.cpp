@@ -7,7 +7,9 @@ TEST(BLOOMTEST, TestFile){
 
 	BloomFilter<int> bFilter;
 
-	bFilter.update(0, 1000, "D:\\LSM\\bah.bin");
+	std::string filename = "D:\\LSM\\0_1024";
+
+	bFilter.update(0, 1024, filename);
 
 	std::map<std::pair<int, int>, std::string, comparator<int>> filemap = bFilter.getFileMap();
 
@@ -15,5 +17,6 @@ TEST(BLOOMTEST, TestFile){
 
 	ASSERT_EQ(filemap.size(), 1);
 	ASSERT_EQ(sizeMap.size(), 1);
+
 
 }
