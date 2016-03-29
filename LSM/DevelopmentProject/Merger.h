@@ -4,12 +4,14 @@
 #include <string>
 #include <map>
 #include <deque>
-#include "Request.h"
 #include <stdio.h>
 #include <Windows.h>
-#include "CudaDevice.h"
 #include <vector> 
 #include <functional>
+
+#include "CudaDevice.h"
+#include "BloomFilter.h"
+#include "Request.h"
 
 enum MergeType {
 	ONBOARD,
@@ -23,11 +25,22 @@ private:
 	int level, ratio;
 	std::string fileDir;
 	
-	std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>> C0;
+	std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>> *C0;
 
 	MergeType type;
 
 	CudaDevice<T, R> *device;
+
+	void requestMerge(Request<T, R> *arrA, Request<T, R> *arrB, int size, Request<T, R> *mergedArray){
+	
+		if (this->type == MergeType::DEVICE && this->device->isCudaAvailable()){
+			this->mergeGPU(arrA, arrB, size, mergedArray);
+		}
+		else{
+			this->mergeCPU(arrA, arrB, size, mergedArray);
+		}
+	};
+
 
 public:
 	 
@@ -55,6 +68,8 @@ public:
 
 		this->device = new CudaDevice<T, R>();
 
+		auto cmp = [](const T& a, const T& b) { return a < b; };
+		this->C0 = new std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>>(cmp);
 	};
 
 	/*
@@ -66,14 +81,16 @@ public:
 	* Destructor 
 	*/
 	~Merger(){
+		delete this->C0;
 		delete this->device;
 	};
 
 	/*
 	* Process all insert, update and delete requests
 	*/
-	void modify(Request<T, R> &request) {
-		this->C0[request.getKey()] = request;
+	void insert(Request<T, R> &request) {
+	
+		this->C0->insert(std::make_pair(request.getKey(), request));
 	};
 
 	/*
@@ -93,16 +110,10 @@ public:
 	*/
 	void merge() {
 
-		if (this->type == MergeType::DEVICE && this->device->isCudaAvailable()){
-			
-		}
-		else{
-			
-		}
+		
 	};
 
-	
-
+	 
 	/*
 	* CPU merge version
 	*/

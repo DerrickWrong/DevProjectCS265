@@ -5,7 +5,7 @@
 #include "Request.h"
 #include <deque> 
 #include <iostream>
-
+#include "Merger.h"
 
 /**********************
 * Processor is the actual worker that does all the insert,
@@ -15,14 +15,22 @@
 ***********************/
 template<class T, class R>
 class Processor {
-	 
+	
+private:
+	Predicate<T>* predicate;
+	std::deque<Request<T, R>> work;
+	std::deque<Request<T, R>> queryQueue;
+
+	Merger<T, R> *merger;
+
 public:
-	Processor(Predicate<T> *p) {
+	Processor(int level, int ratio, std::string baseFileDir, MergeType mtype, Predicate<T> *p) {
 		this->predicate = p;
+		this->merger = new Merger<T, R>(level, ratio, baseFileDir, mtype);
 	};
 
 	~Processor() {
-		delete this->predicate;
+		delete this->merger; 
 	};
 
 	bool consume(Request<T, R> &request) {
@@ -49,7 +57,7 @@ public:
 			Request<T, R> req = this->work.front();
 
 			if (req.getType() == INSERT || req.getType() == REMOVE) { 
-				
+				this->merger->insert(req);
 			}
 			else if (req.getType() == QUERY) { 
 				this->queryQueue.push_back(req);
@@ -58,21 +66,26 @@ public:
 			this->work.pop_front();
 		} 
 
+		//invoke merge
+		this->merger->merge();
+
 		//invoke check query
+		this->merger->query(this->queryQueue);
 
 	};
 
 	/*
 	* Get Query Work Queue
 	*/
-	std::deque<Request<T, R>> getQueryWork () {
+	std::deque<Request<T, R>>& getQueryWork () {
 		return this->queryQueue;
 	};
 
-private:
-	Predicate<T> *predicate;
-	std::deque<Request<T, R>> work;
-	std::deque<Request<T, R>> queryQueue;
+	std::deque<Request<T, R>>& getWork(){
+		return this->work;
+	};
+
+
 };
 
 #endif // !PROCESSOR_H
