@@ -56,7 +56,7 @@ TEST(SingleProcessor, simpleFilterTest){
 	RangePredicate<int> *rangePred;
 	rangePred = new RangePredicate<int>(1000000, 2000000);
 
-	Processor<int, int> processor(1024, 2, "D:\LSM\1m_2m", MergeType::DEVICE, rangePred);
+	Processor<int, int> processor(1024, 2, "D:\\LSM\\1m_2m", MergeType::DEVICE, rangePred);
 
 	Request<int, int> *insertReqs;
 	int size = 10000;

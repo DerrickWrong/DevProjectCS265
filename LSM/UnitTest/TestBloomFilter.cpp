@@ -11,43 +11,21 @@
 using namespace std;
 using namespace boost::filesystem;
 
-TEST(BLOOMTEST, TestFile){
 
-	BloomFilter<int> bFilter;
+TEST(BLOOMTEST, TestFolder){
 
-	std::string filename = "D:\\LSM\\0_1024";
+	std::string p = "D:\\LSM\\1m_2m";
 
-	bFilter.update(0, 1024, filename);
+	boost::filesystem::path folderPath(p);
 
-	std::map<std::pair<int, int>, std::string, comparator<int>> filemap = bFilter.getFileMap();
+	BloomFilter<int> bFilter(p);
 
-	std::map<std::string, long> sizeMap = bFilter.getFileSizeMap();
+	bool folderExists = boost::filesystem::exists(folderPath);
 
-	ASSERT_EQ(filemap.size(), 1);
-	ASSERT_EQ(sizeMap.size(), 1);
+	ASSERT_EQ(folderExists, true);
 
-
-}
-
-
-TEST(BLOOMTEST, listFile){
- 
-	// list all files in current directory.
-	//You could put any file path in here, e.g. "/home/me/mwah" to list that directory
-	path p("D:\\LSM");
-
-	directory_iterator end_itr;
-
-	// cycle through the directory
-	for (directory_iterator itr(p); itr != end_itr; ++itr)
-	{
-		// If it's not a directory, list it. If you want to list directories too, just remove this check.
-		if (is_regular_file(itr->path())) {
-			// assign current file name to current_file and echo it out to the console.
-			string current_file = itr->path().string();
-			cout << current_file << endl;
-		}
-	}
+	ASSERT_EQ(bFilter.getFileMap().size() == 1, true);
 
 }
+
 

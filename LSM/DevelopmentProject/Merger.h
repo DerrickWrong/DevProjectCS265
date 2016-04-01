@@ -4,14 +4,13 @@
 #include <string>
 #include <map>
 #include <deque>
-#include <stdio.h>
-#include <Windows.h>
 #include <vector> 
 #include <functional>
 
 #include "CudaDevice.h"
 #include "BloomFilter.h"
 #include "Request.h"
+#include "BloomFilter.h"
 
 enum MergeType {
 	ONBOARD,
@@ -31,8 +30,10 @@ private:
 
 	CudaDevice<T, R> *device;
 
+	BloomFilter<T> *filter;
+
 	void requestMerge(Request<T, R> *arrA, Request<T, R> *arrB, int size, Request<T, R> *mergedArray){
-	
+	 
 		if (this->type == MergeType::DEVICE && this->device->isCudaAvailable()){
 			this->mergeGPU(arrA, arrB, size, mergedArray);
 		}
@@ -52,19 +53,7 @@ public:
 	*/
 	Merger(int level, int ratio, std::string filedir, MergeType type) : level(level), ratio(ratio), fileDir(filedir), type(type) {
 	  
-		//create directory if not exist else read all files from directory
-		std::wstring stemp = std::wstring(filedir.begin(), filedir.end()); 
-
-		DWORD dwAttrib = GetFileAttributes(stemp.c_str());
-
-		bool fileExist = (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
-
-
-		if (fileExist == false)
-		{
-			// Directory created
-			CreateDirectory(stemp.c_str(), NULL);
-		} 
+		this->filter = new BloomFilter<T>(fileDir);
 
 		this->device = new CudaDevice<T, R>();
 
@@ -81,6 +70,7 @@ public:
 	* Destructor 
 	*/
 	~Merger(){
+		delete this->filter;
 		delete this->C0;
 		delete this->device;
 	};
@@ -100,7 +90,7 @@ public:
 		
 		//read local cache
 
-		
+
 		//read every single file on disk 
 
 	};
@@ -110,6 +100,37 @@ public:
 	*/
 	void merge() {
 
+		//check if the file meets the file limit (level) 
+		if (this->C0->size() < this->level){
+			return;
+		}
+
+		Request<T, R> *tempTree;
+		tempTree = (Request<T, R>*)malloc(sizeof(Request<T, R>) * this->level);
+
+		int counter = 0;
+
+		//Perform merge for equal size files	
+		for (std::map<T, Request<T, R>>::iterator it = this->C0->begin(); it != this->C0->end(); ++it){
+			
+			tempTree[counter] = it->second;
+			counter = counter + 1;
+
+			//remove 
+			this->C0->erase(it->first);
+
+			//break the loop
+			if (counter == this->level){
+				break;
+			}
+		}
+		
+		int level = 0;
+
+
+
+		//free resources
+		delete tempTree;
 		
 	};
 

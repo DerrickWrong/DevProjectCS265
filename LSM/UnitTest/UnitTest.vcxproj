@@ -160,7 +160,6 @@
     <ClCompile Include="SingleProcessorTest.cpp" />
     <ClCompile Include="TestBloomFilter.cpp" />
     <ClCompile Include="TestFile.cpp" />
-    <ClCompile Include="TestMerger.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -45,7 +45,7 @@ TEST(GPUTest, Merge1024Test){
 
 TEST(GPUTest, Merge1024_TestTwo){
 
-	int size = 1024;
+	int size = 1025;
 
 	Request<int, int> *arrA = generateArr(size, 10);
 	Request<int, int> *arrB = generateArr(size, 0);

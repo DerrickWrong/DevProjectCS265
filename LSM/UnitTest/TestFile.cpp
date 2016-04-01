@@ -35,7 +35,7 @@ Request<int, int> *generateArrFile(int size, int offset){
 TEST(IOTest, testWrite_1024){
 	 
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_1024";
+	std::string filename = "0_1024-1";
 	int dataSize = 1024;
 
 	FileAccessor<int, int> fa(baseFolder);
@@ -51,7 +51,7 @@ TEST(IOTest, testWrite_1024){
 TEST(IOTest, testWrite_2048){
 
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_2048";
+	std::string filename = "0_2048-2";
 	int dataSize = 2048;
 
 	FileAccessor<int, int> fa(baseFolder);
@@ -67,7 +67,7 @@ TEST(IOTest, testWrite_2048){
 TEST(IOTest, testWrite_4096){
 
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_4096";
+	std::string filename = "0_4096-3";
 	int dataSize = 4096;
 
 	FileAccessor<int, int> fa(baseFolder);
@@ -83,7 +83,7 @@ TEST(IOTest, testWrite_4096){
 TEST(IOTest, testWrite_102400){
 
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_102400";
+	std::string filename = "0_102400-5";
 	int dataSize = 102400;
 
 	FileAccessor<int, int> fa(baseFolder);
@@ -99,7 +99,7 @@ TEST(IOTest, testWrite_102400){
 TEST(IOTest, testWrite_1024000){
 
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_1024000";
+	std::string filename = "0_1024000-10";
 	int dataSize = 1024000;
 
 	FileAccessor<int, int> fa(baseFolder);
@@ -117,7 +117,7 @@ TEST(IOTest, testWrite_1024000){
 TEST(IOTest, testRead_1024){
 	  
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_1024";
+	std::string filename = "0_1024-1";
 	FileAccessor<int, int> fa(baseFolder);
 
 	auto cmp = [](const int& a, const int& b) { return a < b; };
@@ -130,7 +130,7 @@ TEST(IOTest, testRead_1024){
 TEST(IOTest, testRead_2048){
 
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_2048";
+	std::string filename = "0_2048-2";
 	FileAccessor<int, int> fa(baseFolder);
 
 	auto cmp = [](const int& a, const int& b) { return a < b; };
@@ -143,7 +143,7 @@ TEST(IOTest, testRead_2048){
 TEST(IOTest, testRead_4096){
 
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_4096";
+	std::string filename = "0_4096-3";
 	FileAccessor<int, int> fa(baseFolder);
 
 	auto cmp = [](const int& a, const int& b) { return a < b; };
@@ -156,7 +156,7 @@ TEST(IOTest, testRead_4096){
 TEST(IOTest, testRead_102400){
 
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_102400";
+	std::string filename = "0_102400-5";
 	FileAccessor<int, int> fa(baseFolder);
 
 	auto cmp = [](const int& a, const int& b) { return a < b; };
@@ -169,7 +169,7 @@ TEST(IOTest, testRead_102400){
 TEST(IOTest, testRead_1024000){
 
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_1024000";
+	std::string filename = "0_1024000-10";
 	FileAccessor<int, int> fa(baseFolder);
 
 	auto cmp = [](const int& a, const int& b) { return a < b; };
