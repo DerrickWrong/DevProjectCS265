@@ -66,12 +66,12 @@ public:
 			this->work.pop_front();
 		} 
 
-		//invoke merge
-		this->merger->merge();
-
 		//invoke check query
 		this->merger->query(this->queryQueue);
 
+		//invoke merge 
+		this->merger->merge();
+		  
 	};
 
 	/*

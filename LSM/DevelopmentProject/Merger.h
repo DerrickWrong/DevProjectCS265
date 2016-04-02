@@ -9,8 +9,8 @@
 
 #include "CudaDevice.h"
 #include "BloomFilter.h"
-#include "Request.h"
-#include "BloomFilter.h"
+#include "Request.h" 
+#include "FileAccessor.h"
 
 enum MergeType {
 	ONBOARD,
@@ -31,6 +31,8 @@ private:
 	CudaDevice<T, R> *device;
 
 	BloomFilter<T> *filter;
+
+	FileAccessor<T, R> *fileAccess;
 
 	void requestMerge(Request<T, R> *arrA, Request<T, R> *arrB, int size, Request<T, R> *mergedArray){
 	 
@@ -59,6 +61,8 @@ public:
 
 		auto cmp = [](const T& a, const T& b) { return a < b; };
 		this->C0 = new std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>>(cmp);
+
+		this->fileAccess = new FileAccessor<T, R>(filedir);
 	};
 
 	/*
@@ -73,7 +77,34 @@ public:
 		delete this->filter;
 		delete this->C0;
 		delete this->device;
+		delete this->fileAccess;
 	};
+
+	/*
+	* Process Read Query 
+	*/
+	static void processReadQuery(std::deque<Request<T, R>> &requests, std::deque<Request<T, R>> &completed, std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>> &tree){
+		
+		int size = requests.size(); 
+
+		while (size > 0){
+			
+			Request<T, R> req = requests.front();
+			requests.pop_front();
+
+			if (tree.count(req.getKey()) == 1){
+				Request<T, R> v = tree.at(req.getKey());
+				req.setValue(v.getValue());
+				completed.push_back(req);
+			}
+			else{
+				requests.push_back(req);
+			}
+
+			size--;
+		} 
+	}
+
 
 	/*
 	* Process all insert, update and delete requests
@@ -88,11 +119,32 @@ public:
 	*/
 	void query(std::deque<Request<T, R>> &requests) {
 		
-		//read local cache
-
+		//check C0 
+		std::deque<Request<T, R>> completed;
+		
+		this->processReadQuery(requests, completed, *this->C0);
 
 		//read every single file on disk 
+		std::map<int, std::string, std::function<bool(const int&, const int&)>> *kMap = this->filter->getLevelMap();
 
+		std::map<int, std::string>::iterator it;
+
+		auto cmp = [](const T& a, const T& b) { return a < b; };
+		std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>> ctree(cmp);
+
+		for (it = kMap->begin(); it != kMap->end(); it++){
+			std::string fn = it->second;
+			  
+			if (requests.empty()){
+				break;
+			}
+			else{
+				this->fileAccess->readFile(fn, ctree);
+				this->processReadQuery(requests, completed, ctree);
+			}
+		}
+
+		requests = completed;
 	};
 
 	/*
@@ -127,11 +179,13 @@ public:
 		
 		int level = 0;
 
+		//merge while
+
+
 
 
 		//free resources
 		delete tempTree;
-		
 	};
 
 	 

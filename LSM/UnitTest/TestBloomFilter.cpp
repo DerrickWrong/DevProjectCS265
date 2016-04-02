@@ -24,7 +24,7 @@ TEST(BLOOMTEST, TestFolder){
 
 	ASSERT_EQ(folderExists, true);
 
-	ASSERT_EQ(bFilter.getFileMap().size() == 1, true);
+	ASSERT_EQ(bFilter.getLevelMap()->size() == 1, true);
 
 }
 

@@ -58,10 +58,12 @@ TEST(SingleProcessor, simpleFilterTest){
 
 	Processor<int, int> processor(1024, 2, "D:\\LSM\\1m_2m", MergeType::DEVICE, rangePred);
 
+	//create insert requests
 	Request<int, int> *insertReqs;
 	int size = 10000;
 	insertReqs = generateInsertRequest(size, 999000);
 
+	//submit them to the processor
 	for (int i = 0; i < size; i++){
 		processor.consume(insertReqs[i]);
 	}
@@ -69,7 +71,7 @@ TEST(SingleProcessor, simpleFilterTest){
 	//validate only certain works are accepted
 	ASSERT_EQ(processor.getWork().size(), 9000);
 
-	//add read requests
+	//create read requests
 	Request<int, int> *readReqs;
 	int readSize = 100;
 	readReqs = generateReadRequest(readSize, 1000000);

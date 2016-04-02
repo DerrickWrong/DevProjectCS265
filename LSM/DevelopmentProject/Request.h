@@ -33,7 +33,7 @@ public:
 	}
 
 	__host__ __device__ void setValue(P value) {
-		this->value;
+		this->value = value;
 	}
 
 	__host__ __device__ long getTimestamp() {
