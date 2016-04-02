@@ -103,7 +103,6 @@ public:
 	std::pair<T, T> &getPair(std::string &s){
 		
 		return this->pairMap.at(s);
-
 	};
 
 
@@ -123,13 +122,16 @@ public:
 	};
 
 	/*
-	* Remove file from file queue
+	* Remove file from file queue and disk
 	*/
 	void remove(int key) 
 	{
 		std::string file = this->files->at(key);
 		this->pairMap.erase(file);
 		this->files->erase(key);
+
+		boost::filesystem::path p(file);
+		boost::filesystem::remove(p);
 	};
 
 };

@@ -14,25 +14,26 @@ int *generate(int size, int val){
 	return ptr;
 }
 
-Request<int, int> *generateArr(int size, int offset){
+Request<int, int> *generateArr(long timestamp, int size, int offset){
 
 	Request<int, int> *ptr;
 	ptr = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size);
 
 	for (int i = 0; i < size; i++){
-		Request<int, int> temp(0L, i + offset, i);
+		Request<int, int> temp(timestamp, i + offset, i);
 		ptr[i] = temp;
 	}
 
 	return ptr;
 }
+/*
 
 TEST(GPUTest, Merge1024Test){
 	 
 	int size = 1024;
 
-	Request<int, int> *arrA = generateArr(size, 10);
-	Request<int, int> *arrB = generateArr(size, 0);
+	Request<int, int> *arrA = generateArr(10L, size, 10);
+	Request<int, int> *arrB = generateArr(0L, size, 0);
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
@@ -47,8 +48,8 @@ TEST(GPUTest, Merge1024_TestTwo){
 
 	int size = 1025;
 
-	Request<int, int> *arrA = generateArr(size, 10);
-	Request<int, int> *arrB = generateArr(size, 0);
+	Request<int, int> *arrA = generateArr(10L, size, 10);
+	Request<int, int> *arrB = generateArr(0L, size, 0);
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
@@ -63,8 +64,8 @@ TEST(GPUTest, Merge2048Test){
 
 	int size = 2048;
 
-	Request<int, int> *arrA = generateArr(size, 10);
-	Request<int, int> *arrB = generateArr(size, 0);
+	Request<int, int> *arrA = generateArr(10L, size, 10);
+	Request<int, int> *arrB = generateArr(0L, size, 0);
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
@@ -79,8 +80,8 @@ TEST(GPUTest, Merge4096Test){
 
 	int size = 4096;
 
-	Request<int, int> *arrA = generateArr(size, 10);
-	Request<int, int> *arrB = generateArr(size, 0);
+	Request<int, int> *arrA = generateArr(10L, size, 10);
+	Request<int, int> *arrB = generateArr(0L, size, 0);
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
@@ -95,8 +96,8 @@ TEST(GPUTest, Merge102400Test){
 
 	int size = 102400;
 
-	Request<int, int> *arrA = generateArr(size, 10);
-	Request<int, int> *arrB = generateArr(size, 0);
+	Request<int, int> *arrA = generateArr(10L, size, 10);
+	Request<int, int> *arrB = generateArr(0L, size, 0);
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
@@ -111,8 +112,8 @@ TEST(GPUTest, Merge204800Test){
 
 	int size = 204800;
 
-	Request<int, int> *arrA = generateArr(size, 10);
-	Request<int, int> *arrB = generateArr(size, 0);
+	Request<int, int> *arrA = generateArr(10L, size, 10);
+	Request<int, int> *arrB = generateArr(0L, size, 0);
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
@@ -127,8 +128,8 @@ TEST(GPUTest, Merge409600Test){
 
 	int size = 409600;
 
-	Request<int, int> *arrA = generateArr(size, 10);
-	Request<int, int> *arrB = generateArr(size, 0);
+	Request<int, int> *arrA = generateArr(10L, size, 10);
+	Request<int, int> *arrB = generateArr(0L, size, 0);
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
@@ -138,3 +139,5 @@ TEST(GPUTest, Merge409600Test){
 	delete arrB;
 	delete sol;
 }
+
+*/

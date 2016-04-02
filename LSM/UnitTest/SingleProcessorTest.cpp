@@ -54,14 +54,14 @@ TEST(SingleProcessor, simpleFilterTest){
 
 	//process only requests between 1m to 2m
 	RangePredicate<int> *rangePred;
-	rangePred = new RangePredicate<int>(1000000, 2000000);
+	rangePred = new RangePredicate<int>(0, 2048);
 
 	Processor<int, int> processor(1024, 2, "D:\\LSM\\1m_2m", MergeType::DEVICE, rangePred);
 
 	//create insert requests
 	Request<int, int> *insertReqs;
-	int size = 10000;
-	insertReqs = generateInsertRequest(size, 999000);
+	int size = 1024;
+	insertReqs = generateInsertRequest(size, 1024);
 
 	//submit them to the processor
 	for (int i = 0; i < size; i++){
@@ -69,7 +69,9 @@ TEST(SingleProcessor, simpleFilterTest){
 	}
 
 	//validate only certain works are accepted
-	ASSERT_EQ(processor.getWork().size(), 9000);
+	ASSERT_EQ(processor.getWork().size(), 1024);
+
+	/*
 
 	//create read requests
 	Request<int, int> *readReqs;
@@ -80,7 +82,11 @@ TEST(SingleProcessor, simpleFilterTest){
 		processor.consume(readReqs[i]);
 	}
 
+	*/
+
+	processor.execute();
+
 	//free resource
 	delete insertReqs;
-	delete readReqs;
+	//delete readReqs;
 }

@@ -103,7 +103,24 @@ public:
 
 			size--;
 		} 
-	}
+	};
+
+	static Request<T, R> *convertMap(std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>> &treeMap){
+		
+		Request<T, R> *arr = (Request<T, R>*)malloc(sizeof(Request<T, R>) * treeMap.size());
+		
+		std::map<T, Request<T, R>>::iterator it;
+
+		int counter = 0;
+
+		for (it = treeMap.begin(); it != treeMap.end(); it++){
+		
+			arr[counter] = it->second;
+			counter = counter + 1;
+		}
+		  
+		return arr;
+	};
 
 
 	/*
@@ -147,48 +164,100 @@ public:
 		requests = completed;
 	};
 
+	
+	/*
+	* Recursive Merging all the tree
+	*/
+	void recursiveMerge(int currLevel, Request<T, R>* Ltree, std::map<int, std::string, std::function<bool(const int&, const int&)>> *bloomFilter){
+	 
+		Request<T, R> *ptr;
+
+		if (bloomFilter->count(currLevel) == 1){
+			
+			Request<T, R>* B;
+
+			auto cmp = [](const T& a, const T& b) { return a < b; };
+			std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>> cTreeMap(cmp);
+
+			std::string file = bloomFilter->at(currLevel);
+
+			//read from disk 
+			this->fileAccess->readFile(file, cTreeMap);
+			B = Merger<T, R>::convertMap(cTreeMap);
+
+			//create dynamic array
+			ptr = (Request<T, R>*)malloc(sizeof(Request<T, R>) * (currLevel * this->level));
+			
+			//invoke merge
+			this->requestMerge(Ltree, B, (currLevel * this->level), ptr);
+
+			//increment level
+			currLevel = currLevel + 1;
+			 
+			//free resources
+			delete B;
+			 
+		}
+		else{ 
+			return;
+		}
+
+		//determine if it needs to make another merge
+		if (bloomFilter->count(currLevel) == 1){
+			
+			this->recursiveMerge(currLevel, ptr, bloomFilter);
+
+		}
+		else{
+			//save to file to disk
+			int length = (currLevel - 1) * this->level;
+			T bot = ptr[0].getKey();
+			T top = ptr[length - 1].getKey();
+
+			std::string filename;
+
+			filename.append(reinterpret_cast<char*>(&bot));
+			filename.append("_");
+			filename.append(reinterpret_cast<char*>(&top));
+			filename.append("-");
+			filename.append(reinterpret_cast<char*>(&length));
+
+			fileAccess->writeFile(filename, ptr, length);
+		}
+
+		//free the resources
+		delete ptr;
+	};
+
 	/*
 	* Check C0 tree and see if it should be merged or save to disk
 	*/
 	void merge() {
 
-		//check if the file meets the file limit (level) 
+		//check if the file meets the file limit (1st level) 
 		if (this->C0->size() < this->level){
 			return;
 		}
 
-		Request<T, R> *tempTree;
-		tempTree = (Request<T, R>*)malloc(sizeof(Request<T, R>) * this->level);
+		int currLevel = 1;
 
-		int counter = 0;
+		//merge 
+		std::map<int, std::string, std::function<bool(const int&, const int&)>> *diskMap = this->filter->getLevelMap();
 
-		//Perform merge for equal size files	
-		for (std::map<T, Request<T, R>>::iterator it = this->C0->begin(); it != this->C0->end(); ++it){
-			
-			tempTree[counter] = it->second;
-			counter = counter + 1;
+		auto cmp = [](const T& a, const T& b) { return a < b; };
+		std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>> cTreeMap(cmp);
 
-			//remove 
-			this->C0->erase(it->first);
+		Request<T, R>* A;
+		A = Merger<T, R>::convertMap(*this->C0);
 
-			//break the loop
-			if (counter == this->level){
-				break;
-			}
-		}
-		
-		int level = 0;
-
-		//merge while
-
-
-
+		this->recursiveMerge(currLevel, A, diskMap);
 
 		//free resources
-		delete tempTree;
+		delete A;
+		delete diskMap;
 	};
 
-	 
+
 	/*
 	* CPU merge version
 	*/
@@ -228,30 +297,23 @@ public:
 	void mergeGPU(Request<T, R> *arrA, Request<T, R> *arrB, int size, Request<T, R> *mergedArray){
 	
 		//create index for A
-		int *idxA = new int[size];
 		int *idxB = new int[size];
-		
+
 		for (int i = 0; i < size; i++){
-			idxA[i] = i;
 			idxB[i] = i;
 		}
 
-		//invoke merge kernel to find A respective to B
+		//invoke merge kernel to find B indices in respective to A
 		this->device->mergeKernel(arrA, arrB, idxB, size);
-		this->device->mergeKernel(arrB, arrA, idxA, size);
-
 
 		//place merged item into an array
 		for (int i = 0; i < size; i++){
-			mergedArray[idxA[i]] = arrA[i];
-			mergedArray[idxB[i]] = arrB[i];
+			mergedArray[idxB[i]] = arrB[i];   
 		}
 
 		//free resource and return sorted vector
-		delete idxA;
 		delete idxB;
 	};
-
 
 };
 
