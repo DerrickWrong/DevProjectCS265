@@ -15,22 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TestFile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DeviceMergeUnitTest.cpp">
+    <ClCompile Include="SingleProcessorTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CPUMergeUnitTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestBloomFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SingleProcessorTest.cpp">
+    <ClCompile Include="DeviceMergeUnitTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MergerTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestBloomFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

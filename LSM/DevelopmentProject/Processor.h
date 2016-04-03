@@ -31,6 +31,7 @@ public:
 
 	~Processor() {
 		delete this->merger; 
+		delete this->predicate;
 	};
 
 	bool consume(Request<T, R> &request) {

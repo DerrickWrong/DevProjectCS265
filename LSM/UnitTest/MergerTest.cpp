@@ -29,6 +29,7 @@ void createReadRequests(std::deque<Request<int, int>> &requests, int size, int o
 	}
 
 }
+/*
 
 TEST(MergerTest, TestProcessReadQueryInMemory_size_100K_requests_10k){
 	 
@@ -65,3 +66,4 @@ TEST(MergerTest, TestProcessReadQueryDisk_query_1024){
 	ASSERT_EQ(requests.at(0).getValue(), 0);
 	ASSERT_EQ(requests.at(1023).getValue(), 1023);
 }
+*/

@@ -26,7 +26,6 @@ Request<int, int> *generateArr(long timestamp, int size, int offset){
 
 	return ptr;
 }
-/*
 
 TEST(GPUTest, Merge1024Test){
 	 
@@ -139,5 +138,3 @@ TEST(GPUTest, Merge409600Test){
 	delete arrB;
 	delete sol;
 }
-
-*/

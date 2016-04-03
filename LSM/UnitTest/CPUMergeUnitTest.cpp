@@ -25,7 +25,7 @@ Request<int, int> *generateArrCPU(int size, int offset){
 	}
 
 	return ptr;
-}
+} 
 
 TEST(CPUTest, Merge1024Test){
 

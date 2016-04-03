@@ -78,7 +78,8 @@ template<typename T, typename P> __global__ void merge(Request<T, P> *arrA, Requ
 template<typename T, typename P> void CudaDevice<T, P>::mergeKernel(Request<T, P> *arrayA, Request<T, P> *arrayB, int *indices, int size){
 
 	int *idx_d;
-	Request<T, P> *d_arrayA, *d_arrayB;
+	Request<T, P> *d_arrayA;
+	Request<T, P> *d_arrayB;
 	int sizeOfArr = size * sizeof(Request<T, P>);
 	 
 	//allocate memory
@@ -95,8 +96,6 @@ template<typename T, typename P> void CudaDevice<T, P>::mergeKernel(Request<T, P
 	merge<T, P> <<<32, 32>>> (d_arrayA, d_arrayB, idx_d, size);
 
 	//move data back to host
-	cudaMemcpy(arrayA, d_arrayA, sizeOfArr, cudaMemcpyDeviceToHost);
-	cudaMemcpy(arrayB, d_arrayB, sizeOfArr, cudaMemcpyDeviceToHost);
 	cudaMemcpy(indices, idx_d, (size * sizeof(int)), cudaMemcpyDeviceToHost);
 
 	//free device memory

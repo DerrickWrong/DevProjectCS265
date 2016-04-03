@@ -5,12 +5,13 @@
 #include <map>
 #include <deque>
 #include <vector> 
-#include <functional>
+#include <functional> 
 
 #include "CudaDevice.h"
 #include "BloomFilter.h"
 #include "Request.h" 
 #include "FileAccessor.h"
+#include "Utils.h"
 
 enum MergeType {
 	ONBOARD,
@@ -34,7 +35,7 @@ private:
 
 	FileAccessor<T, R> *fileAccess;
 
-	void requestMerge(Request<T, R> *arrA, Request<T, R> *arrB, int size, Request<T, R> *mergedArray){
+	void requestMerge(Request<T, R>* &arrA, Request<T, R>* &arrB, int size, Request<T, R>* &mergedArray){
 	 
 		if (this->type == MergeType::DEVICE && this->device->isCudaAvailable()){
 			this->mergeGPU(arrA, arrB, size, mergedArray);
@@ -43,8 +44,7 @@ private:
 			this->mergeCPU(arrA, arrB, size, mergedArray);
 		}
 	};
-
-
+	 
 public:
 	 
 	/*
@@ -55,7 +55,7 @@ public:
 	*/
 	Merger(int level, int ratio, std::string filedir, MergeType type) : level(level), ratio(ratio), fileDir(filedir), type(type) {
 	  
-		this->filter = new BloomFilter<T>(fileDir);
+		this->filter = new BloomFilter<T>(fileDir, this->level);
 
 		this->device = new CudaDevice<T, R>();
 
@@ -76,14 +76,14 @@ public:
 	~Merger(){
 		delete this->filter;
 		delete this->C0;
-		delete this->device;
+		//delete this->device;
 		delete this->fileAccess;
 	};
 
 	/*
 	* Process Read Query 
 	*/
-	static void processReadQuery(std::deque<Request<T, R>> &requests, std::deque<Request<T, R>> &completed, std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>> &tree){
+	void processReadQuery(std::deque<Request<T, R>> &requests, std::deque<Request<T, R>> &completed, std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>> &tree){
 		
 		int size = requests.size(); 
 
@@ -105,24 +105,7 @@ public:
 		} 
 	};
 
-	static Request<T, R> *convertMap(std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>> &treeMap){
-		
-		Request<T, R> *arr = (Request<T, R>*)malloc(sizeof(Request<T, R>) * treeMap.size());
-		
-		std::map<T, Request<T, R>>::iterator it;
-
-		int counter = 0;
-
-		for (it = treeMap.begin(); it != treeMap.end(); it++){
-		
-			arr[counter] = it->second;
-			counter = counter + 1;
-		}
-		  
-		return arr;
-	};
-
-
+	 
 	/*
 	* Process all insert, update and delete requests
 	*/
@@ -168,14 +151,14 @@ public:
 	/*
 	* Recursive Merging all the tree
 	*/
-	void recursiveMerge(int currLevel, Request<T, R>* Ltree, std::map<int, std::string, std::function<bool(const int&, const int&)>> *bloomFilter){
-	 
-		Request<T, R> *ptr;
+	void recursiveMerge(int currLevel, Request<T, R>* &Ltree, std::map<int, std::string, std::function<bool(const int&, const int&)>> *bloomFilter){
+	   
+		Request<T, R> *ptr = nullptr;
 
 		if (bloomFilter->count(currLevel) == 1){
 			
-			Request<T, R>* B;
-
+			Request<T, R>* B = nullptr;
+			int Bsize = 0;
 			auto cmp = [](const T& a, const T& b) { return a < b; };
 			std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>> cTreeMap(cmp);
 
@@ -183,11 +166,9 @@ public:
 
 			//read from disk 
 			this->fileAccess->readFile(file, cTreeMap);
-			B = Merger<T, R>::convertMap(cTreeMap);
+			Utils<T, R>::createArray(cTreeMap, B, Bsize);
+			this->filter->remove(currLevel); // remove the old file
 
-			//create dynamic array
-			ptr = (Request<T, R>*)malloc(sizeof(Request<T, R>) * (currLevel * this->level));
-			
 			//invoke merge
 			this->requestMerge(Ltree, B, (currLevel * this->level), ptr);
 
@@ -198,7 +179,18 @@ public:
 			delete B;
 			 
 		}
-		else{ 
+		else{  
+			//save to file
+			int length = std::pow(2, currLevel - 1) * this->level;
+			T bot = Ltree[0].getKey();
+			T top = Ltree[length - 1].getKey();
+
+			std::string fn = Utils<T, R>::createFileName(bot, top, std::pow(2, currLevel - 1));
+
+			fileAccess->writeFile(fn, Ltree, std::pow(2, currLevel - 1));
+
+			this->filter->update(fn);
+
 			return;
 		}
 
@@ -210,19 +202,16 @@ public:
 		}
 		else{
 			//save to file to disk
-			int length = (currLevel - 1) * this->level;
+			 
+			int length = std::pow(2, currLevel - 1) * this->level;
 			T bot = ptr[0].getKey();
-			T top = ptr[length - 1].getKey();
-
-			std::string filename;
-
-			filename.append(reinterpret_cast<char*>(&bot));
-			filename.append("_");
-			filename.append(reinterpret_cast<char*>(&top));
-			filename.append("-");
-			filename.append(reinterpret_cast<char*>(&length));
-
-			fileAccess->writeFile(filename, ptr, length);
+			T top = ptr[length - 1].getKey(); 
+			  
+			std::string fn = Utils<T, R>::createFileName(bot, top, std::pow(2, currLevel - 1));
+			  
+			fileAccess->writeFile(fn, ptr, length);
+			
+			this->filter->update(fn);
 		}
 
 		//free the resources
@@ -248,22 +237,29 @@ public:
 		std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>> cTreeMap(cmp);
 
 		Request<T, R>* A;
-		A = Merger<T, R>::convertMap(*this->C0);
+		A = (Request<T, R>*)malloc(sizeof(Request<T, R>) * this->C0->size());
+		int Asize = 0;
 
+		Utils<T, R>::createArray(*this->C0, A, Asize);
+		 
 		this->recursiveMerge(currLevel, A, diskMap);
 
 		//free resources
 		delete A;
 		delete diskMap;
+		this->C0->clear();
 	};
 
 
 	/*
 	* CPU merge version
 	*/
-	void mergeCPU(Request<T, R> *arrA, Request<T, R> *arrB, int size, Request<T, R> *mergedArray){
+	void mergeCPU(Request<T, R>* &arrA, Request<T, R>* &arrB, int size, Request<T, R>* &mergedArray){
 		
 		int msize = size * 2;
+
+		//create dynamic array
+		mergedArray = (Request<T, R>*)malloc(sizeof(Request<T, R>) * msize);
 
 		std::vector<Request<T, R>> vec;
 
@@ -294,8 +290,11 @@ public:
 	/*
 	* GPU merge version
 	*/
-	void mergeGPU(Request<T, R> *arrA, Request<T, R> *arrB, int size, Request<T, R> *mergedArray){
+	void mergeGPU(Request<T, R>* &arrA, Request<T, R>* &arrB, int size, Request<T, R>* &mergedArray){
 	
+		//create dynamic array
+		mergedArray = (Request<T, R>*)malloc(sizeof(Request<T, R>) * (size * 2));
+
 		//create index for A
 		int *idxB = new int[size];
 
@@ -306,11 +305,26 @@ public:
 		//invoke merge kernel to find B indices in respective to A
 		this->device->mergeKernel(arrA, arrB, idxB, size);
 
-		//place merged item into an array
-		for (int i = 0; i < size; i++){
-			mergedArray[idxB[i]] = arrB[i];   
-		}
+		int mIdx = 0;
 
+		int aix = 0;
+		int bix = 0;
+
+		//place merged item into an array
+		while (mIdx < (size * 2)){
+		
+			if (idxB[bix] == mIdx){
+				mergedArray[mIdx] = arrB[bix];
+				bix++;
+			}
+			else{
+				mergedArray[mIdx] = arrA[aix];
+				aix++;
+			}
+
+			mIdx++;
+		}
+		 
 		//free resource and return sorted vector
 		delete idxB;
 	};

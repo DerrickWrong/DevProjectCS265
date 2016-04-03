@@ -11,6 +11,7 @@ class __declspec(dllexport)  CudaDevice{
 public:
 	CudaDevice();
 	static bool isCudaAvailable();
+	~CudaDevice(){};
 
 	/*
 	* CUDA Interface Function

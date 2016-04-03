@@ -31,7 +31,6 @@ Request<int, int> *generateArrFile(int size, int offset){
 	return ptr;
 }
 
-
 TEST(IOTest, testWrite_1024){
 	 
 	std::string baseFolder = "D:\\LSM";

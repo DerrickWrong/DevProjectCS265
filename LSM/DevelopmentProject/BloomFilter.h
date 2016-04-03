@@ -41,12 +41,15 @@ class BloomFilter {
 
 private: 
 	std::string baseFolderPath;
-	std::map<int, std::string, std::function<bool(const int&, const int&)>> *files;
+	std::map<int, std::string, std::function<bool(const int&, const int&)>> *files = nullptr; 
 	std::map<std::string, std::pair<T, T>> pairMap;
+	int levelRatio = 0;
 	
 public:
-	BloomFilter(std::string folder) {
-	
+	BloomFilter(std::string folder, int level) {
+	  
+		this->levelRatio = level;
+
 		auto cmp = [](const int& a, const int& b) { return a < b; };
 		this->files = new std::map<int, std::string, std::function<bool(const int&, const int&)>>(cmp);
 
@@ -63,34 +66,14 @@ public:
 		for (boost::filesystem::directory_iterator itr(dir); itr != end_itr; ++itr)
 		{
 			if (boost::filesystem::is_regular_file(itr->path())) {
-				std::string current_file = itr->path().string();
-				
-				//process and update to map
-				int desirePos = current_file.find_last_of("\\");
-				current_file = current_file.substr(desirePos + 1, current_file.length());
-				int uscore = current_file.find("_"); 
-				int dash = current_file.find("-");
-
-				std::stringstream LB(current_file.substr(0, uscore));
-				std::stringstream UB(current_file.substr(uscore + 1, dash));
-				std::stringstream SB(current_file.substr(dash + 1, current_file.length() - 1));
-
-				T lowerKey, upperKey;
-				int lvl;
-
-				LB >> lowerKey;
-				UB >> upperKey;
-				SB >> lvl;
-
-				this->update(upperKey, lowerKey, current_file, lvl);
+				std::string current_file = itr->path().string(); 
+				this->update(current_file);
 			}
 		}
 
-	};
+	}; 
 
-	~BloomFilter(){
-		delete this->files;
-	};
+	~BloomFilter(){};
 
 	/*
 	* Get file size
@@ -109,14 +92,32 @@ public:
 	/*
 	* update file map file into file queue
 	*/
-	bool update(T upper, T lower, std::string path, int level) {
+	bool update(std::string path) {
 		
-		if (this->files->count(level)){
+		//process and update to map
+		int desirePos = path.find_last_of("\\");
+		std::string fileName = path.substr(desirePos + 1, path.length());
+		int uscore = fileName.find("_");
+		int dash = fileName.find("-");
+
+		std::stringstream LB(fileName.substr(0, uscore));
+		std::stringstream UB(fileName.substr(uscore + 1, dash));
+		std::stringstream SB(fileName.substr(dash + 1, fileName.length() - 1));
+
+		T lowerKey, upperKey;
+		int lvl;
+
+		LB >> lowerKey;
+		UB >> upperKey;
+		SB >> lvl;
+		  
+		if (this->files->count(lvl)){
 			return false;
 		}
 		else{
-			this->files->insert(std::make_pair(level, path));
-			this->pairMap.insert(std::make_pair(path, std::make_pair(upper, lower)));
+			 
+			this->files->insert(std::make_pair(lvl, fileName));
+			this->pairMap.insert(std::make_pair(fileName, std::make_pair(upperKey, lowerKey)));
 			return true;
 		} 
 	};
@@ -130,8 +131,14 @@ public:
 		this->pairMap.erase(file);
 		this->files->erase(key);
 
-		boost::filesystem::path p(file);
-		boost::filesystem::remove(p);
+		std::string f;
+
+		f.append(this->baseFolderPath);
+		f.append("\\");
+		f.append(file);
+
+		boost::filesystem::path p(f);
+		boost::filesystem::remove_all(p);
 	};
 
 };

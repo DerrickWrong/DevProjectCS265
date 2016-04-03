@@ -3,6 +3,11 @@
 #include "RangePredicate.h"
 #include <time.h>
 
+#include "Utils.h"
+
+#include <map>
+#include <functional>
+
 Request<int, int> *generateInsertRequest(int size, int offset){
 
 	Request<int, int> *ptr;
@@ -49,7 +54,32 @@ Request<int, int> *generateRemoveRequest(int size, int offset){
 	return ptr;
 }
 
+TEST(singleProcessor, bahTest){
 
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> map(cmp);
+
+	for (int i = 0; i < 1000; i++){
+		
+		Request<int, int> req(10L, i, i);
+		map.insert(std::make_pair(i, req));
+	}
+
+	Request<int, int> *p = nullptr;
+	int size = 0;
+
+	Utils<int, int>::createArray(map, p, size);
+
+	for (int i = 0; i < 1000; i++){
+		
+		ASSERT_EQ(p[i].getKey(), i);
+
+	}
+
+	ASSERT_EQ(size, 1000);
+
+}
+ 
 TEST(SingleProcessor, simpleFilterTest){
 
 	//process only requests between 1m to 2m
@@ -71,22 +101,15 @@ TEST(SingleProcessor, simpleFilterTest){
 	//validate only certain works are accepted
 	ASSERT_EQ(processor.getWork().size(), 1024);
 
-	/*
-
-	//create read requests
-	Request<int, int> *readReqs;
-	int readSize = 100;
-	readReqs = generateReadRequest(readSize, 1000000);
-
-	for (int i = 0; i < readSize; i++){
-		processor.consume(readReqs[i]);
-	}
-
-	*/
-
 	processor.execute();
+	 
+	//ASSERT_EQ(processor.getWork().size(), 0);
+	ASSERT_EQ(processor.getQueryWork().size(), 0);
 
 	//free resource
-	delete insertReqs;
-	//delete readReqs;
-}
+	delete insertReqs;   
+
+	//boost::filesystem::path p("D:\\LSM\\1m_2m\\0_2047-2");
+	//boost::filesystem::remove_all(p);
+
+} 
