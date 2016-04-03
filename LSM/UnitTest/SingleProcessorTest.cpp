@@ -39,21 +39,6 @@ Request<int, int> *generateReadRequest(int size, int offset){
 	return ptr;
 }
 
-Request<int, int> *generateRemoveRequest(int size, int offset){
-
-	Request<int, int> *ptr;
-	ptr = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size);
-
-	long timestamp = std::time(0);
-
-	for (int i = 0; i < size; i++){
-		Request<int, int> temp(timestamp, i, RequestType::REMOVE);
-		ptr[i] = temp;
-	}
-
-	return ptr;
-}
-
 TEST(singleProcessor, bahTest){
 
 	auto cmp = [](const int& a, const int& b) { return a < b; };
@@ -80,7 +65,7 @@ TEST(singleProcessor, bahTest){
 
 }
  
-TEST(SingleProcessor, simpleFilterTest){
+TEST(SingleProcessor, simpleLSMProcessingTest){
 
 	//process only requests between 1m to 2m
 	RangePredicate<int> *rangePred;
@@ -104,12 +89,40 @@ TEST(SingleProcessor, simpleFilterTest){
 	processor.execute();
 	 
 	//ASSERT_EQ(processor.getWork().size(), 0);
-	ASSERT_EQ(processor.getQueryWork().size(), 0);
+	ASSERT_EQ(processor.getWork().size(), 0);
+
+	boost::filesystem::path p("D:\\LSM\\1m_2m\\1024_2047-1");
+	boost::filesystem::remove_all(p);
 
 	//free resource
 	delete insertReqs;   
-
-	//boost::filesystem::path p("D:\\LSM\\1m_2m\\0_2047-2");
-	//boost::filesystem::remove_all(p);
-
+	  
 } 
+
+TEST(SingleProcessor, simpleReadTest){
+
+	//process only requests between 1m to 2m
+	RangePredicate<int> *rangePred;
+	rangePred = new RangePredicate<int>(0, 2048);
+
+	Processor<int, int> processor(1024, 2, "D:\\LSM\\ReadTest", MergeType::DEVICE, rangePred);
+
+	//create insert requests
+	Request<int, int> *insertReqs;
+	int size = 1024;
+	insertReqs = generateReadRequest(size, 1024);
+
+	//submit them to the processor
+	for (int i = 0; i < size; i++){
+		processor.consume(insertReqs[i]);
+	} 
+
+	processor.execute();
+
+	//ASSERT_EQ(processor.getWork().size(), 0);
+	ASSERT_EQ(processor.getQueryWork().size(), 1024);
+
+	//free resource
+	delete insertReqs;
+
+}

@@ -167,10 +167,12 @@ public:
 			//read from disk 
 			this->fileAccess->readFile(file, cTreeMap);
 			Utils<T, R>::createArray(cTreeMap, B, Bsize);
+			  
 			this->filter->remove(currLevel); // remove the old file
 
 			//invoke merge
-			this->requestMerge(Ltree, B, (currLevel * this->level), ptr);
+			int le = currLevel * this->level; 
+			this->requestMerge(Ltree, B, le, ptr);
 
 			//increment level
 			currLevel = currLevel + 1;
@@ -187,7 +189,7 @@ public:
 
 			std::string fn = Utils<T, R>::createFileName(bot, top, std::pow(2, currLevel - 1));
 
-			fileAccess->writeFile(fn, Ltree, std::pow(2, currLevel - 1));
+			fileAccess->writeFile(fn, Ltree, length);
 
 			this->filter->update(fn);
 
@@ -203,11 +205,11 @@ public:
 		else{
 			//save to file to disk
 			 
-			int length = std::pow(2, currLevel - 1) * this->level;
+			int length = std::pow(2, currLevel) * this->level;
 			T bot = ptr[0].getKey();
-			T top = ptr[length - 1].getKey(); 
-			  
-			std::string fn = Utils<T, R>::createFileName(bot, top, std::pow(2, currLevel - 1));
+			T top = ptr[length - 1].getKey();  
+
+			std::string fn = Utils<T, R>::createFileName(bot, top, std::pow(2, currLevel));
 			  
 			fileAccess->writeFile(fn, ptr, length);
 			
