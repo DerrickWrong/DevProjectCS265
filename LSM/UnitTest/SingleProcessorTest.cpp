@@ -39,6 +39,14 @@ Request<int, int> *generateReadRequest(int size, int offset){
 	return ptr;
 }
 
+TEST(singleProcessor, generatorTest){
+	
+	Request<int, int> *insertReqs;
+	int size = 1024;
+	insertReqs = generateInsertRequest(size, 1024);
+
+}
+
 TEST(singleProcessor, bahTest){
 
 	auto cmp = [](const int& a, const int& b) { return a < b; };

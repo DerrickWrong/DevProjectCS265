@@ -298,15 +298,15 @@ public:
 		mergedArray = (Request<T, R>*)malloc(sizeof(Request<T, R>) * (size * 2));
 
 		//create index for A
-		int *idxB = new int[size];
+		int *idxB = new int[size]; 
 
-		for (int i = 0; i < size; i++){
+		for (int i = 0; i < size; i++){ 
 			idxB[i] = i;
 		}
 
 		//invoke merge kernel to find B indices in respective to A
 		this->device->mergeKernel(arrA, arrB, idxB, size);
-
+  
 		int mIdx = 0;
 
 		int aix = 0;
@@ -325,10 +325,10 @@ public:
 			}
 
 			mIdx++;
-		}
+		} 
 		 
 		//free resource and return sorted vector
-		delete idxB;
+		delete idxB; 
 	};
 
 };

@@ -123,3 +123,67 @@ TEST(CPUTest, Merge409600Test){
 	delete arrB;
 	delete sol;
 }
+
+TEST(CPUTest, Merge1024000Test){
+
+	int size = 1024000;
+
+	Request<int, int> *arrA = generateArrCPU(size, 10);
+	Request<int, int> *arrB = generateArrCPU(size, 0);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
+
+	merger.mergeCPU(arrA, arrB, size, sol);
+
+	delete arrA;
+	delete arrB;
+	delete sol;
+}
+
+TEST(CPUTest, Merge2048000Test){
+
+	int size = 2048000;
+
+	Request<int, int> *arrA = generateArrCPU(size, 10);
+	Request<int, int> *arrB = generateArrCPU(size, 0);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
+
+	merger.mergeCPU(arrA, arrB, size, sol);
+
+	delete arrA;
+	delete arrB;
+	delete sol;
+}
+
+TEST(CPUTest, Merge4096000Test){
+
+	int size = 4096000;
+
+	Request<int, int> *arrA = generateArrCPU(size, 10);
+	Request<int, int> *arrB = generateArrCPU(size, 0);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
+
+	merger.mergeCPU(arrA, arrB, size, sol);
+
+	delete arrA;
+	delete arrB;
+	delete sol;
+}
+
+TEST(CPUTest, Merge10240000Test){
+
+	int size = 10240000;
+
+	Request<int, int> *arrA = generateArrCPU(size, 10);
+	Request<int, int> *arrB = generateArrCPU(size, 0);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
+
+	merger.mergeCPU(arrA, arrB, size, sol);
+
+	delete arrA;
+	delete arrB;
+	delete sol;
+}
