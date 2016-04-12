@@ -66,7 +66,7 @@ public:
 
 			this->work.pop_front();
 		} 
-
+		 
 		//invoke check query
 		this->merger->query(this->queryQueue);
 

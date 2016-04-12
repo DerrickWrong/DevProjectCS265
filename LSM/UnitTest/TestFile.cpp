@@ -7,6 +7,8 @@
 #include <map>
 #include <functional>
 
+#include "boost\filesystem.hpp"
+
 int *generateFile(int size, int val){
 
 	int *ptr = new int[size];
@@ -17,8 +19,8 @@ int *generateFile(int size, int val){
 
 	return ptr;
 }
-
-Request<int, int> *generateArrFile(int size, int offset){
+  
+Request<int, int>* &generateArrFile(int size, int offset){
 
 	Request<int, int> *ptr;
 	ptr = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size);
@@ -29,6 +31,54 @@ Request<int, int> *generateArrFile(int size, int offset){
 	}
 
 	return ptr;
+} 
+
+Request<int, int>* &generateArrReadFile(int size, int offset){
+
+	Request<int, int> *ptr;
+	ptr = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size);
+
+	for (int i = 0; i < size; i++){
+		Request<int, int> temp(0L, i + offset, RequestType::QUERY);
+		ptr[i] = temp;
+	}
+
+	return ptr;
+}
+
+
+TEST(IOTEST, testReadWrite_100k){
+
+	std::string baseFolder = "D:\\LSM\\ReadSmallFileTest";
+	std::string filename = "0_1000-1";
+
+	int dataSize = 1000000;
+	FileAccessor<int, int> fa(baseFolder);
+
+	//generate insert requests
+	Request<int, int> *dummy = generateArrFile(dataSize, 0);
+	
+	for (int i = 0; i < dataSize; i++){
+		EXPECT_EQ(dummy[i].getValue(), i);
+	}
+
+	fa.writeFile(filename, dummy, dataSize);
+
+	delete dummy;
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> ctree(cmp);
+
+	fa.readFile(filename, ctree);
+
+	for (int i = 0; i < dataSize; i++){
+		EXPECT_EQ(1, ctree.count(i));
+	}
+
+	//clean up
+	boost::filesystem::path p("D:\\LSM\\ReadSmallFileTest\\0_1000-1");
+	boost::filesystem::remove_all(p);
+
 }
 
 TEST(IOTest, testWrite_1024){
@@ -112,7 +162,6 @@ TEST(IOTest, testWrite_1024000){
 }
  
 /********************************************************READ TEST ********************************************/
-
 TEST(IOTest, testRead_1024){
 	  
 	std::string baseFolder = "D:\\LSM";
@@ -177,3 +226,4 @@ TEST(IOTest, testRead_1024000){
 	fa.readFile(filename, m);
 	ASSERT_EQ(m.size(), 1024000);
 }
+

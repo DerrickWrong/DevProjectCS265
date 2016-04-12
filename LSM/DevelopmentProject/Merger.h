@@ -135,16 +135,32 @@ public:
 		for (it = kMap->begin(); it != kMap->end(); it++){
 			std::string fn = it->second;
 			  
+			std::cout << "query filename " << fn << std::endl;
+
 			if (requests.empty()){
 				break;
 			}
 			else{
 				this->fileAccess->readFile(fn, ctree);
+				std::cout << "Tree size " << ctree.size() << std::endl;
 				this->processReadQuery(requests, completed, ctree);
 			}
+		} 
+
+		std::cout << "Requests: " << requests.size() << std::endl;
+
+		//copy completed requests to pinging requests
+		int completedSize = completed.size();
+
+		while (completedSize > 0){
+		
+			requests.push_back(completed.front());
+			completed.pop_front();
+
+			completedSize--;
 		}
 
-		requests = completed;
+		std::cout << "Requests: " << requests.size() << std::endl;
 	};
 
 	
@@ -203,9 +219,9 @@ public:
 
 		}
 		else{
-			//save to file to disk
-			 
+			//save to file to disk 
 			int length = std::pow(2, currLevel) * this->level;
+			std::cout << length << std::endl;
 			T bot = ptr[0].getKey();
 			T top = ptr[length - 1].getKey();  
 
@@ -242,8 +258,10 @@ public:
 		A = (Request<T, R>*)malloc(sizeof(Request<T, R>) * this->C0->size());
 		int Asize = 0;
 
-		Utils<T, R>::createArray(*this->C0, A, Asize);
-		 
+		Utils<T, R>::createArray(*this->C0, A, Asize); 
+
+		std::cout << "current level " << currLevel << " A size " << Asize << std::endl;
+
 		this->recursiveMerge(currLevel, A, diskMap);
 
 		//free resources

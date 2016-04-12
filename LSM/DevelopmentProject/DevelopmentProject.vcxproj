@@ -160,6 +160,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   <ItemGroup>
     <ClInclude Include="BloomFilter.h" />
     <ClInclude Include="Broadcaster.h" />
+    <ClInclude Include="Buffer.h" />
     <ClInclude Include="CudaDevice.h" />
     <ClInclude Include="FileAccessor.h" />
     <ClInclude Include="Merger.h" />
