@@ -16,10 +16,9 @@ public:
 	/*
 	* CUDA Interface Function
 	*/  
-	void mergeKernel(Request<T, P> *arrayA, Request<T, P> *arrayB, int *indices, int size);
+	void mergeKernel(Request<T, P>* &arrayA, int arrASize, Request<T, P>* &arrayB, int* &indices, int size);
 }; 
 
-template class __declspec(dllexport) CudaDevice<int, int>;
-template class __declspec(dllexport) CudaDevice<float, float>;
+template class __declspec(dllexport) CudaDevice<int, int>; 
 
 #endif

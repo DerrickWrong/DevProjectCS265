@@ -27,6 +27,8 @@ private:
 	
 	std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>> *C0;
 
+	std::deque<Request<T, R>> insertRequests;
+
 	MergeType type;
 
 	CudaDevice<T, R> *device;
@@ -112,6 +114,7 @@ public:
 	void insert(Request<T, R> &request) {
 	
 		this->C0->insert(std::make_pair(request.getKey(), request));
+
 	};
 
 	/*
@@ -310,11 +313,8 @@ public:
 	/*
 	* GPU merge version
 	*/
-	void mergeGPU(Request<T, R>* &arrA, Request<T, R>* &arrB, int size, Request<T, R>* &mergedArray){
-	
-		//create dynamic array
-		mergedArray = (Request<T, R>*)malloc(sizeof(Request<T, R>) * (size * 2));
-
+	void mergeGPU(Request<T, R>* arrA, Request<T, R>* &arrB, int size, Request<T, R>* mergedArray, int arrSize){
+	  
 		//create index for A
 		int *idxB = new int[size]; 
 
@@ -322,16 +322,22 @@ public:
 			idxB[i] = i;
 		}
 
+		std::cout << "B idx size " << size << std::endl;
+
 		//invoke merge kernel to find B indices in respective to A
-		this->device->mergeKernel(arrA, arrB, idxB, size);
+		this->device->mergeKernel(arrA, (arrSize - size), arrB, idxB, size);
   
 		int mIdx = 0;
 
 		int aix = 0;
 		int bix = 0;
 
+		for (int i = 0; i < size; i++){
+			std::cout << "key " << i << " B " << idxB[i] << std::endl;
+		}
+
 		//place merged item into an array
-		while (mIdx < (size * 2)){
+		while (mIdx < arrSize){
 		
 			if (idxB[bix] == mIdx){
 				mergedArray[mIdx] = arrB[bix];
@@ -347,6 +353,55 @@ public:
 		 
 		//free resource and return sorted vector
 		delete idxB; 
+	};
+
+	void invokeGPUmerge(Request<T, R>* arrA, int arrAsize, Request<T, R>* arrB, int arrBsize, Request<T, R>* &mergedArray){
+	
+		mergedArray = (Request<int, int>*)malloc(sizeof(Request<int, int>) * (arrAsize + arrBsize));
+
+		//append A to the end of B
+		if ((arrA[arrAsize - 1].getKey() < arrB[0].getKey())){
+		
+			std::cout << "Append A to B" << std::endl;
+
+			for (int i = 0; i < arrAsize; i++){
+				mergedArray[i] = arrA[i];
+			}
+
+			for (int i = arrAsize; i < arrAsize + arrBsize; i++){
+				mergedArray[i] = arrB[i - arrAsize];
+			}
+
+			return;
+		}
+
+
+		//append B to the end of A
+		if (arrB[arrBsize - 1].getKey() < arrA[0].getKey()){
+			
+			std::cout << "Append B to A" << std::endl;
+
+			for (int i = 0; i < arrBsize; i++){
+				mergedArray[i] = arrB[i];
+			}
+
+			for (int i = arrBsize; i < arrAsize + arrBsize; i++){
+				mergedArray[i] = arrA[i - arrBsize];
+			}
+
+			return;
+		}
+
+		//mix A and B 
+		if (arrAsize < arrBsize){
+			std::cout << "Mix A to B" << std::endl;
+			mergeGPU(arrB, arrA, arrAsize, mergedArray, (arrAsize + arrBsize));
+		}
+		else{
+			std::cout << "Mix B to A" << std::endl;
+			mergeGPU(arrA, arrB, arrBsize, mergedArray, (arrAsize + arrBsize));
+		}
+
 	};
 
 };

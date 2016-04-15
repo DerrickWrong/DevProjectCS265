@@ -44,6 +44,7 @@ Request<int, int>* &generateReadRequest(int size, int offset){
 	return ptr;
 }
 
+/*
 TEST(SingleProcessor, ReadLoadTest){
 
 	//process only requests between 1m to 2m
@@ -71,7 +72,7 @@ TEST(SingleProcessor, ReadLoadTest){
 
 }
 
-/*
+
 
 TEST(singleProcessor, bahTest){
 

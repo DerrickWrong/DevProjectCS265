@@ -31,9 +31,9 @@ int main(){
 	CudaDevice<int, int> cuDev;
 	int size = 1024;
 
-	Request<int, int> *arrA = generateArr(size, 10);
+	Request<int, int> *arrA = generateArr(30, 10);
 	Request<int, int> *arrB = generateArr(size, 0);
-	int *idx = generate(size, 1);
+	int *idx = generate(30, 1);
 
 	for (int i = 0; i < 3; i++){
 		std::cout << "A: " << arrA[i].getKey() << " B: " << arrB[i].getKey() << " index " << idx[i] << std::endl;
@@ -41,7 +41,7 @@ int main(){
 
 	std::cout << "Running kernel " << std::endl;
 
-	cuDev.mergeKernel(arrB, arrA, idx, size);
+	cuDev.mergeKernel(arrB, size, arrA, idx, 30);
 
 	std::cout << "Done running kernel " << std::endl;
 

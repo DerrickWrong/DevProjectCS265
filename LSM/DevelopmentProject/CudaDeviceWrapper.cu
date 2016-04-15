@@ -1,6 +1,8 @@
 #include "CudaDevice.h"   
 #include "cuda_runtime.h"  
 
+#include <iostream>
+
 template<typename T, typename P> CudaDevice<T, P>::CudaDevice(){
 }
   
@@ -13,10 +15,9 @@ template<typename T, typename P> bool CudaDevice<T, P>::isCudaAvailable(){
 	return (numDevice > 0);
 }
 
-/*
-* Recursion of binary device search
-*/
-template<typename T, typename P> __device__  void DBsearch(Request<T, P> *arrA, int startPos, int endPos, Request<T, P> &value, int &idx){
+
+
+template<typename T, typename P> __device__  void DBsearch(Request<T, P>* arrA, int startPos, int endPos, T key, int &idx){
 
 	if (startPos == endPos){
 		idx = startPos;
@@ -26,11 +27,11 @@ template<typename T, typename P> __device__  void DBsearch(Request<T, P> *arrA, 
 
 		T Akey = arrA[mid].getKey();
 
-		if (Akey > value.getKey()){
-			DBsearch<T, P>(arrA, startPos, mid - 1, value, idx);
+		if (Akey > key){
+			DBsearch<T, P>(arrA, startPos, mid - 1, key, idx);
 		}
-		else if (Akey < value.getKey()){
-			DBsearch<T, P>(arrA, mid + 1, endPos, value, idx);
+		else if (Akey < key){
+			DBsearch<T, P>(arrA, mid + 1, endPos, key, idx);
 		}
 		else{
 			idx = mid;
@@ -39,67 +40,63 @@ template<typename T, typename P> __device__  void DBsearch(Request<T, P> *arrA, 
 	
 }
 
-/*
-* Merge B into A by compute where B's position in respect to A
-*
-* arrSize is always - 1024 * n where n is greater than 1
-*/
-
-template<typename T, typename P> __global__ void merge(Request<T, P> *arrA, Request<T, P> *arrB, int *arrIdx, int arrSize){
+ 
+template<typename T, typename P> __global__ void merge(Request<T, P>* arrA, Request<T, P>* arrB, int* arrIdx, int arrSize){
 
 	int tid = blockIdx.x * blockDim.x + threadIdx.x;
 
 	if (tid < arrSize){
 
-		int work = arrSize / 1024;
+		int offset = 1024;
+		int workIdx = tid;
+		
+		int Apos;
+		T key;
 
-		int currWorkIdx = tid * work;
+		//move by thread idx
+		while (workIdx < arrSize){
+			
+			key = arrB[workIdx].getKey();
+			 
+			DBsearch<T, P>(arrA, 0, arrSize, key, Apos);
 
-		//using binary search to find the index of A
-		int Apos = 0;
-		DBsearch<T, P>(arrA, 0, arrSize, arrB[currWorkIdx], Apos);
-
-		arrIdx[currWorkIdx] = arrIdx[currWorkIdx] + Apos;
-		currWorkIdx = currWorkIdx + 1;
-		work = work - 1;
-
-		//process thru all the works
-		while (work > 0){
-			DBsearch<T, P>(arrA, Apos, arrSize, arrB[currWorkIdx], Apos);
-
-			arrIdx[currWorkIdx] = arrIdx[currWorkIdx] + Apos;
-			currWorkIdx = currWorkIdx + 1;
-
-			work = work - 1;
-		}
+			arrIdx[workIdx] += Apos;
+  
+			//increment w 
+			workIdx = workIdx + offset;
+		} 
 	}
+	 
 }
 
-template<typename T, typename P> void CudaDevice<T, P>::mergeKernel(Request<T, P> *arrayA, Request<T, P> *arrayB, int *indices, int size){
-
+template<typename T, typename P> void CudaDevice<T, P>::mergeKernel(Request<T, P>* &arrayA, int arrASize, Request<T, P>* &arrayB, int* &indices, int size){
+	
 	int *idx_d;
-	Request<T, P> *d_arrayA;
-	Request<T, P> *d_arrayB;
-	int sizeOfArr = size * sizeof(Request<T, P>);
-	 
+	Request<T, P> *d_arrayA = 0;
+	Request<T, P> *d_arrayB = 0;
+	int sizeOfArrA = arrASize * sizeof(Request<T, P>);
+	int sizeOfArrB = size * sizeof(Request<T, P>);
+	
 	//allocate memory
-	cudaMalloc(&d_arrayA, sizeOfArr);
-	cudaMalloc(&d_arrayB, sizeOfArr);
+	cudaMalloc(&d_arrayA, sizeOfArrA);
+	cudaMalloc(&d_arrayB, sizeOfArrB);
 	cudaMalloc(&idx_d, (size * sizeof(int)));
-
+	
+	
 	//copy data from host to device
-	cudaMemcpy(d_arrayA, arrayA, sizeOfArr, cudaMemcpyHostToDevice);
-	cudaMemcpy(d_arrayB, arrayB, sizeOfArr, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_arrayA, arrayA, sizeOfArrA, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_arrayB, arrayB, sizeOfArrB, cudaMemcpyHostToDevice);
 	cudaMemcpy(idx_d, indices, size * sizeof(int), cudaMemcpyHostToDevice);
 
-	//invoke kernel
-	merge<T, P> <<<32, 32>>> (d_arrayA, d_arrayB, idx_d, size);
+	//invoke kernel 
+	merge<T, P> << <32, 32 >> >(d_arrayA, d_arrayB, idx_d, arrASize);
 
 	//move data back to host
 	cudaMemcpy(indices, idx_d, (size * sizeof(int)), cudaMemcpyDeviceToHost);
-
+	
 	//free device memory
 	cudaFree(d_arrayA);
 	cudaFree(d_arrayB);
 	cudaFree(idx_d);
+	
 }
