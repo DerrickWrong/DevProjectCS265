@@ -263,8 +263,6 @@ public:
 
 		Utils<T, R>::createArray(*this->C0, A, Asize); 
 
-		std::cout << "current level " << currLevel << " A size " << Asize << std::endl;
-
 		this->recursiveMerge(currLevel, A, diskMap);
 
 		//free resources
@@ -322,8 +320,6 @@ public:
 			idxB[i] = i;
 		}
 
-		std::cout << "B idx size " << size << std::endl;
-
 		//invoke merge kernel to find B indices in respective to A
 		this->device->mergeKernel(arrA, (arrSize - size), arrB, idxB, size);
   
@@ -331,10 +327,6 @@ public:
 
 		int aix = 0;
 		int bix = 0;
-
-		for (int i = 0; i < size; i++){
-			std::cout << "key " << i << " B " << idxB[i] << std::endl;
-		}
 
 		//place merged item into an array
 		while (mIdx < arrSize){
@@ -361,9 +353,7 @@ public:
 
 		//append A to the end of B
 		if ((arrA[arrAsize - 1].getKey() < arrB[0].getKey())){
-		
-			std::cout << "Append A to B" << std::endl;
-
+		 
 			for (int i = 0; i < arrAsize; i++){
 				mergedArray[i] = arrA[i];
 			}
@@ -378,8 +368,6 @@ public:
 
 		//append B to the end of A
 		if (arrB[arrBsize - 1].getKey() < arrA[0].getKey()){
-			
-			std::cout << "Append B to A" << std::endl;
 
 			for (int i = 0; i < arrBsize; i++){
 				mergedArray[i] = arrB[i];
@@ -394,11 +382,9 @@ public:
 
 		//mix A and B 
 		if (arrAsize < arrBsize){
-			std::cout << "Mix A to B" << std::endl;
 			mergeGPU(arrB, arrA, arrAsize, mergedArray, (arrAsize + arrBsize));
 		}
 		else{
-			std::cout << "Mix B to A" << std::endl;
 			mergeGPU(arrA, arrB, arrBsize, mergedArray, (arrAsize + arrBsize));
 		}
 

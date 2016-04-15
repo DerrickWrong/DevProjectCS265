@@ -26,28 +26,8 @@ Request<int, int> *generateArr(long timestamp, int size, int offset){
 
 	return ptr;
 }
+ 
 
-TEST(GPUTest, mergeTest512){
-
-	int size = 512;
-
-	Request<int, int> *arrA = generateArr(10L, 10, 17);
-	Request<int, int> *arrB = generateArr(20L, size, 0);
-	Request<int, int> *sol = NULL;
-	Merger<int, int> merger("D:\\LSM");
-
-	merger.invokeGPUmerge(arrB, size, arrA, 10, sol);
-	
-	for (int i = 0; i < size + 10; i++){
-		std::cout << i << " key " <<  sol[i].getKey() << std::endl;
-	}
-
-	delete arrA;
-	delete arrB;
-	delete sol;
-
-}
-/*
 TEST(GPUTest, Merge1024Test){
 	 
 	int size = 1024;
@@ -59,14 +39,13 @@ TEST(GPUTest, Merge1024Test){
 
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol); 
 
-	for (int i = 0; i < (size * 2); i++){
-		EXPECT_EQ(i, sol[i].getKey());
-	}
+
 
 	delete arrA;
 	delete arrB;
 	delete sol;
 }
+
 
 TEST(GPUTest, Merge2048Test){
 
@@ -77,18 +56,14 @@ TEST(GPUTest, Merge2048Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeGPU(arrA, arrB, size, sol);
-
-	for (int i = 0; i < size * 2; i++){
-		EXPECT_EQ(i, sol[i].getKey());
-	}
+	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
 	delete sol;
 }
 
-
+ 
 TEST(GPUTest, Merge4096Test){
 
 	int size = 4096;
@@ -98,11 +73,8 @@ TEST(GPUTest, Merge4096Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeGPU(arrB, arrA, size, sol);
+	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-	for (int i = 0; i < size * 2; i++){
-		EXPECT_EQ(i, sol[i].getKey());
-	}
 
 	delete arrA;
 	delete arrB;
@@ -118,11 +90,8 @@ TEST(GPUTest, Merge8192Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeGPU(arrB, arrA, size, sol);
+	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-	for (int i = 0; i < size * 2; i++){
-		EXPECT_EQ(i, sol[i].getKey());
-	}
 
 	delete arrA;
 	delete arrB;
@@ -138,11 +107,8 @@ TEST(GPUTest, Merge16384Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeGPU(arrB, arrA, size, sol);
+	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-	for (int i = 0; i < size * 2; i++){
-		EXPECT_EQ(i, sol[i].getKey());
-	}
 
 	delete arrA;
 	delete arrB;
@@ -158,11 +124,8 @@ TEST(GPUTest, Merge32768Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeGPU(arrB, arrA, size, sol);
+	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-	for (int i = 0; i < size * 2; i++){
-		EXPECT_EQ(i, sol[i].getKey());
-	}
 
 	delete arrA;
 	delete arrB;
@@ -178,11 +141,8 @@ TEST(GPUTest, Merge65536Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeGPU(arrB, arrA, size, sol);
+	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-	for (int i = 0; i < size * 2; i++){
-		EXPECT_EQ(i, sol[i].getKey());
-	}
 
 	delete arrA;
 	delete arrB;
@@ -198,11 +158,7 @@ TEST(GPUTest, Merge131072Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeGPU(arrB, arrA, size, sol);
-
-	for (int i = 0; i < size * 2; i++){
-		EXPECT_EQ(i, sol[i].getKey());
-	}
+	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -218,11 +174,7 @@ TEST(GPUTest, Merge262144Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeGPU(arrB, arrA, size, sol);
-
-	for (int i = 0; i < size * 2; i++){
-		EXPECT_EQ(i, sol[i].getKey());
-	}
+	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -238,11 +190,7 @@ TEST(GPUTest, Merge524288Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeGPU(arrB, arrA, size, sol);
-
-	for (int i = 0; i < size * 2; i++){
-		EXPECT_EQ(i, sol[i].getKey());
-	}
+	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -258,11 +206,7 @@ TEST(GPUTest, Merge1048576Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeGPU(arrB, arrA, size, sol);
-
-	for (int i = 0; i < size * 2; i++){
-		EXPECT_EQ(i, sol[i].getKey());
-	}
+	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -278,14 +222,9 @@ TEST(GPUTest, Merge2097152Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeGPU(arrB, arrA, size, sol);
-
-	for (int i = 0; i < size * 2; i++){
-		EXPECT_EQ(i, sol[i].getKey());
-	}
+	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
 	delete sol;
-}
-*/
+} 

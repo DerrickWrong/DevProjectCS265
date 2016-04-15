@@ -17,7 +17,7 @@ template<typename T, typename P> bool CudaDevice<T, P>::isCudaAvailable(){
 
 
 
-template<typename T, typename P> __device__  void DBsearch(Request<T, P>* arrA, int startPos, int endPos, T key, int &idx){
+template<typename T, typename P> __device__  void DBsearch(Request<T, P>* arrA, int startPos, int endPos, T &key, int &idx){
 
 	if (startPos == endPos){
 		idx = startPos;

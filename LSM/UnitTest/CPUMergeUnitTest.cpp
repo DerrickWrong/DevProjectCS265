@@ -54,6 +54,8 @@ TEST(CPUTest, Merge2048Test){
 
 	merger.mergeCPU(arrA, arrB, size, sol);
 
+
+
 	delete arrA;
 	delete arrB;
 	delete sol;
@@ -70,14 +72,51 @@ TEST(CPUTest, Merge4096Test){
 
 	merger.mergeCPU(arrA, arrB, size, sol);
 
+
 	delete arrA;
 	delete arrB;
 	delete sol;
 }
 
-TEST(CPUTest, Merge102400Test){
+TEST(CPUTest, Merge8192Test){
 
-	int size = 102400;
+	int size = 8192;
+
+	Request<int, int> *arrA = generateArrCPU(size, 10);
+	Request<int, int> *arrB = generateArrCPU(size, 0);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
+
+	merger.mergeCPU(arrA, arrB, size, sol);
+
+
+
+	delete arrA;
+	delete arrB;
+	delete sol;
+}
+
+
+TEST(CPUTest, Merge16384Test){
+
+	int size = 16384;
+
+	Request<int, int> *arrA = generateArrCPU(size, 10);
+	Request<int, int> *arrB = generateArrCPU(size, 0);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
+
+	merger.mergeCPU(arrA, arrB, size, sol);
+
+
+	delete arrA;
+	delete arrB;
+	delete sol;
+}
+
+TEST(CPUTest, Merge32768Test){
+
+	int size = 32768;
 
 	Request<int, int> *arrA = generateArrCPU(size, 10);
 	Request<int, int> *arrB = generateArrCPU(size, 0);
@@ -91,26 +130,9 @@ TEST(CPUTest, Merge102400Test){
 	delete sol;
 }
 
+TEST(CPUTest, Merge65536Test){
 
-TEST(CPUTest, Merge204800Test){
-
-	int size = 204800;
-
-	Request<int, int> *arrA = generateArrCPU(size, 10);
-	Request<int, int> *arrB = generateArrCPU(size, 0);
-	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
-	Merger<int, int> merger("D:\\LSM");
-
-	merger.mergeCPU(arrA, arrB, size, sol);
-
-	delete arrA;
-	delete arrB;
-	delete sol;
-}
-
-TEST(CPUTest, Merge409600Test){
-
-	int size = 409600;
+	int size = 65536;
 
 	Request<int, int> *arrA = generateArrCPU(size, 10);
 	Request<int, int> *arrB = generateArrCPU(size, 0);
@@ -119,14 +141,15 @@ TEST(CPUTest, Merge409600Test){
 
 	merger.mergeCPU(arrA, arrB, size, sol);
 
+
 	delete arrA;
 	delete arrB;
 	delete sol;
 }
 
-TEST(CPUTest, Merge1024000Test){
+TEST(CPUTest, Merge131072Test){
 
-	int size = 1024000;
+	int size = 131072;
 
 	Request<int, int> *arrA = generateArrCPU(size, 10);
 	Request<int, int> *arrB = generateArrCPU(size, 0);
@@ -135,14 +158,16 @@ TEST(CPUTest, Merge1024000Test){
 
 	merger.mergeCPU(arrA, arrB, size, sol);
 
+
+
 	delete arrA;
 	delete arrB;
 	delete sol;
 }
 
-TEST(CPUTest, Merge2048000Test){
+TEST(CPUTest, Merge262144Test){
 
-	int size = 2048000;
+	int size = 262144;
 
 	Request<int, int> *arrA = generateArrCPU(size, 10);
 	Request<int, int> *arrB = generateArrCPU(size, 0);
@@ -151,14 +176,15 @@ TEST(CPUTest, Merge2048000Test){
 
 	merger.mergeCPU(arrA, arrB, size, sol);
 
+
 	delete arrA;
 	delete arrB;
 	delete sol;
 }
 
-TEST(CPUTest, Merge4096000Test){
+TEST(CPUTest, Merge524288Test){
 
-	int size = 4096000;
+	int size = 524288;
 
 	Request<int, int> *arrA = generateArrCPU(size, 10);
 	Request<int, int> *arrB = generateArrCPU(size, 0);
@@ -167,14 +193,33 @@ TEST(CPUTest, Merge4096000Test){
 
 	merger.mergeCPU(arrA, arrB, size, sol);
 
+
+
 	delete arrA;
 	delete arrB;
 	delete sol;
 }
 
-TEST(CPUTest, Merge10240000Test){
+TEST(CPUTest, Merge1048576Test){
 
-	int size = 10240000;
+	int size = 1048576;
+
+	Request<int, int> *arrA = generateArrCPU(size, 10);
+	Request<int, int> *arrB = generateArrCPU(size, 0);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
+
+	merger.mergeCPU(arrA, arrB, size, sol);
+
+
+	delete arrA;
+	delete arrB;
+	delete sol;
+}
+
+TEST(CPUTest, Merge2097152Test){
+
+	int size = 2097152;
 
 	Request<int, int> *arrA = generateArrCPU(size, 10);
 	Request<int, int> *arrB = generateArrCPU(size, 0);
