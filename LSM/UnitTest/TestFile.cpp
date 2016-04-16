@@ -129,11 +129,11 @@ TEST(IOTest, testWrite_4096){
 
 }
 
-TEST(IOTest, testWrite_102400){
+TEST(IOTest, testWrite_8192){
 
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_102400-5";
-	int dataSize = 102400;
+	std::string filename = "0_8192-4";
+	int dataSize = 8192;
 
 	FileAccessor<int, int> fa(baseFolder);
 
@@ -145,11 +145,11 @@ TEST(IOTest, testWrite_102400){
 
 }
 
-TEST(IOTest, testWrite_1024000){
+TEST(IOTest, testWrite_16384){
 
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_1024000-10";
-	int dataSize = 1024000;
+	std::string filename = "0_16384-5";
+	int dataSize = 16384;
 
 	FileAccessor<int, int> fa(baseFolder);
 
@@ -160,6 +160,151 @@ TEST(IOTest, testWrite_1024000){
 	delete dummy;
 
 }
+
+TEST(IOTest, testWrite_32768){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_32768-6";
+	int dataSize = 32768;
+
+	FileAccessor<int, int> fa(baseFolder);
+
+	Request<int, int> *dummy = generateArrFile(dataSize, 0);
+
+	fa.writeFile(filename, dummy, dataSize);
+
+	delete dummy;
+
+}
+
+TEST(IOTest, testWrite_65536){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_65536-7";
+	int dataSize = 65536;
+
+	FileAccessor<int, int> fa(baseFolder);
+
+	Request<int, int> *dummy = generateArrFile(dataSize, 0);
+
+	fa.writeFile(filename, dummy, dataSize);
+
+	delete dummy;
+
+}
+
+TEST(IOTest, testWrite_131072){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_131072-8";
+	int dataSize = 131072;
+
+	FileAccessor<int, int> fa(baseFolder);
+
+	Request<int, int> *dummy = generateArrFile(dataSize, 0);
+
+	fa.writeFile(filename, dummy, dataSize);
+
+	delete dummy;
+
+}
+
+TEST(IOTest, testWrite_262144){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_262144-9";
+	int dataSize = 262144;
+
+	FileAccessor<int, int> fa(baseFolder);
+
+	Request<int, int> *dummy = generateArrFile(dataSize, 0);
+
+	fa.writeFile(filename, dummy, dataSize);
+
+	delete dummy;
+
+}
+
+TEST(IOTest, testWrite_524288){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_524288-10";
+	int dataSize = 524288;
+
+	FileAccessor<int, int> fa(baseFolder);
+
+	Request<int, int> *dummy = generateArrFile(dataSize, 0);
+
+	fa.writeFile(filename, dummy, dataSize);
+
+	delete dummy;
+
+}
+
+TEST(IOTest, testWrite_1048576){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_1048576-11";
+	int dataSize = 1048576;
+
+	FileAccessor<int, int> fa(baseFolder);
+
+	Request<int, int> *dummy = generateArrFile(dataSize, 0);
+
+	fa.writeFile(filename, dummy, dataSize);
+
+	delete dummy;
+
+}
+
+TEST(IOTest, testWrite_2097152){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_2097152-12";
+	int dataSize = 2097152;
+
+	FileAccessor<int, int> fa(baseFolder);
+
+	Request<int, int> *dummy = generateArrFile(dataSize, 0);
+
+	fa.writeFile(filename, dummy, dataSize);
+
+	delete dummy;
+
+}
+
+TEST(IOTest, testWrite_4194304){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_4194304-13";
+	int dataSize = 4194304;
+
+	FileAccessor<int, int> fa(baseFolder);
+
+	Request<int, int> *dummy = generateArrFile(dataSize, 0);
+
+	fa.writeFile(filename, dummy, dataSize);
+
+	delete dummy;
+
+}
+
+TEST(IOTest, testWrite_8388608){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_8388608-14";
+	int dataSize = 8388608;
+
+	FileAccessor<int, int> fa(baseFolder);
+
+	Request<int, int> *dummy = generateArrFile(dataSize, 0);
+
+	fa.writeFile(filename, dummy, dataSize);
+
+	delete dummy;
+
+}
+
  
 /********************************************************READ TEST ********************************************/
 TEST(IOTest, testRead_1024){
@@ -201,29 +346,146 @@ TEST(IOTest, testRead_4096){
 	ASSERT_EQ(m.size(), 4096);
 }
 
-TEST(IOTest, testRead_102400){
+TEST(IOTest, testRead_8192){
 
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_102400-5";
+	std::string filename = "0_8192-4";
 	FileAccessor<int, int> fa(baseFolder);
 
 	auto cmp = [](const int& a, const int& b) { return a < b; };
 	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
 
 	fa.readFile(filename, m);
-	ASSERT_EQ(m.size(), 102400);
+	ASSERT_EQ(m.size(), 8192);
 }
 
-TEST(IOTest, testRead_1024000){
+TEST(IOTest, testRead_16384){
 
 	std::string baseFolder = "D:\\LSM";
-	std::string filename = "0_1024000-10";
+	std::string filename = "0_16384-5";
 	FileAccessor<int, int> fa(baseFolder);
 
 	auto cmp = [](const int& a, const int& b) { return a < b; };
 	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
 
 	fa.readFile(filename, m);
-	ASSERT_EQ(m.size(), 1024000);
+	ASSERT_EQ(m.size(), 16384);
+}
+
+TEST(IOTest, testRead_32768){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_32768-6";
+	FileAccessor<int, int> fa(baseFolder);
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
+
+	fa.readFile(filename, m);
+	ASSERT_EQ(m.size(), 32768);
+}
+
+TEST(IOTest, testRead_65536){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_65536-7";
+	FileAccessor<int, int> fa(baseFolder);
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
+
+	fa.readFile(filename, m);
+	ASSERT_EQ(m.size(), 65536);
+}
+
+TEST(IOTest, testRead_131072){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_131072-8";
+	FileAccessor<int, int> fa(baseFolder);
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
+
+	fa.readFile(filename, m);
+	ASSERT_EQ(m.size(), 131072);
+}
+
+TEST(IOTest, testRead_262144){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_262144-9";
+	FileAccessor<int, int> fa(baseFolder);
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
+
+	fa.readFile(filename, m);
+	ASSERT_EQ(m.size(), 262144);
+}
+
+TEST(IOTest, testRead_524288){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_524288-10";
+	FileAccessor<int, int> fa(baseFolder);
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
+
+	fa.readFile(filename, m);
+	ASSERT_EQ(m.size(), 524288);
+}
+
+TEST(IOTest, testRead_1048576){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_1048576-11";
+	FileAccessor<int, int> fa(baseFolder);
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
+
+	fa.readFile(filename, m);
+	ASSERT_EQ(m.size(), 1048576);
+}
+
+TEST(IOTest, testRead_2097152){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_2097152-12";
+	FileAccessor<int, int> fa(baseFolder);
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
+
+	fa.readFile(filename, m);
+	ASSERT_EQ(m.size(), 2097152);
+}
+
+TEST(IOTest, testRead_4194304){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_4194304-13";
+	FileAccessor<int, int> fa(baseFolder);
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
+
+	fa.readFile(filename, m);
+	ASSERT_EQ(m.size(), 4194304);
+}
+
+TEST(IOTest, testRead_8388608){
+
+	std::string baseFolder = "D:\\LSM";
+	std::string filename = "0_8388608-14";
+	FileAccessor<int, int> fa(baseFolder);
+
+	auto cmp = [](const int& a, const int& b) { return a < b; };
+	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> m(cmp);
+
+	fa.readFile(filename, m);
+	ASSERT_EQ(m.size(), 8388608);
 }
 

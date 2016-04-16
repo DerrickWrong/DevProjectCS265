@@ -12,8 +12,7 @@ template<class T, class P>
 class FileAccessor{
 
 private:
-	std::string baseDir;
-	FILE *pfile; 
+	std::string baseDir;  
 
 public:
 
@@ -44,7 +43,6 @@ public:
 
 			while (myFile){
 			
-				myFile.read(reinterpret_cast<char*>(&timestamp), sizeof(long));
 				myFile.read(reinterpret_cast<char*>(&_key), sizeof(T));
 				myFile.read(reinterpret_cast<char*>(&_val), sizeof(P));
 
@@ -66,21 +64,28 @@ public:
 		std::ofstream file;
 		file.open(fileFullDir, std::ios::binary);
   
-		T key;
-		P value;
+		T key, pkey;
+		P value, pval;
 		long timestamp;
-
+		
 		for (int i = 0; i < size; i++){ 
 			
 			key = ctree[i].getKey();
 			value = ctree[i].getValue();
 			timestamp = ctree[i].getTimestamp();
 			
+			//remove duplicate 
+			if (i > 0 && pkey == key){
+				continue;
+			}
+
 			//this->write(file, timestamp, key, value);
-			file.write(reinterpret_cast<char*>(&timestamp), sizeof(long));
 			file.write(reinterpret_cast<char*>(&key), sizeof(T));
 			file.write(reinterpret_cast<char*>(&value), sizeof(P));
 			
+			//assign previous values
+			pkey = key;
+			pval = value;
 		}
 
 		file.close();

@@ -162,6 +162,7 @@
     <ClCompile Include="MergerTest.cpp" />
     <ClCompile Include="SingleProcessorTest.cpp" />
     <ClCompile Include="TestBloomFilter.cpp" />
+    <ClCompile Include="TestByte.cpp" />
     <ClCompile Include="TestFile.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

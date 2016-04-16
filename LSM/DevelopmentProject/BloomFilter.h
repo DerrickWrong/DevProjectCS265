@@ -95,10 +95,10 @@ public:
 	bool update(std::string path) {
 		
 		//process and update to map
-		int desirePos = path.find_last_of("\\");
+		size_t desirePos = path.find_last_of("\\");
 		std::string fileName = path.substr(desirePos + 1, path.length());
-		int uscore = fileName.find("_");
-		int dash = fileName.find("-");
+		size_t uscore = fileName.find("_");
+		size_t dash = fileName.find("-");
 
 		std::stringstream LB(fileName.substr(0, uscore));
 		std::stringstream UB(fileName.substr(uscore + 1, dash));

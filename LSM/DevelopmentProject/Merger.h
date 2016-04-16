@@ -222,8 +222,6 @@ public:
 			T bot = ptr[0].getKey();
 			T top = ptr[length - 1].getKey();  
 
-			std::cout << "Top " << top << " bottom " << bot << std::endl;
-
 			std::string fn = Utils<T, R>::createFileName(bot, top, std::pow(2, currLevel - 1));
 			  
 			fileAccess->writeFile(fn, ptr, length);
