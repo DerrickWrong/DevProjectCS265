@@ -44,7 +44,7 @@ Request<int, int>* &generateReadRequest(int size, int offset){
 	return ptr;
 }
 
-/*
+
 TEST(SingleProcessor, ReadLoadTest){
 
 	//process only requests between 1m to 2m
@@ -71,35 +71,30 @@ TEST(SingleProcessor, ReadLoadTest){
 	delete readReqs;
 
 }
-
-
-
-TEST(singleProcessor, bahTest){
-
-	auto cmp = [](const int& a, const int& b) { return a < b; };
-	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> map(cmp);
-
-	for (int i = 0; i < 1000; i++){
-		
-		Request<int, int> req(10L, i, i);
-		map.insert(std::make_pair(i, req));
-	}
-
-	Request<int, int> *p = nullptr;
-	int size = 0;
-
-	Utils<int, int>::createArray(map, p, size);
-
-	for (int i = 0; i < 1000; i++){
-		
-		ASSERT_EQ(p[i].getKey(), i);
-
-	}
-
-	ASSERT_EQ(size, 1000);
-
-}
  
+TEST(SingleProcessor, insert1024){
+
+	//process only requests between 1m to 2m
+	RangePredicate<int> *rangePred;
+	rangePred = new RangePredicate<int>(0, 1024);
+
+	Processor<int, int> processor(1024, 2, "D:\\LSM\\1m_2m", MergeType::DEVICE, rangePred);
+
+	//create insert requests
+	Request<int, int> *insertReqs;
+	int size = 1024;
+	insertReqs = generateInsertRequest(size, 0);
+
+	//submit them to the processor
+	for (int i = 0; i < size; i++){
+		processor.consume(insertReqs[i]);
+	}
+
+	processor.execute();
+
+	delete insertReqs;
+}
+
 TEST(SingleProcessor, insertLoadTest){
 
 	//process only requests between 1m to 2m
@@ -125,7 +120,7 @@ TEST(SingleProcessor, insertLoadTest){
 	  
 	ASSERT_EQ(processor.getWork().size(), 0);
 
-	boost::filesystem::path p("D:\\LSM\\1m_2m\\1024_2047-1");
+	boost::filesystem::path p("D:\\LSM\\1m_2m\\0_2047-2");
 	boost::filesystem::remove_all(p);
 
 	//free resource
@@ -133,9 +128,7 @@ TEST(SingleProcessor, insertLoadTest){
 	  
 } 
 
-
-
-
+/*
 TEST(SingleProcessor, mixLoadTest){
 	
 	//process only requests between 1m to 2m

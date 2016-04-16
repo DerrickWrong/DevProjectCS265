@@ -40,7 +40,7 @@ private:
 	void requestMerge(Request<T, R>* &arrA, Request<T, R>* &arrB, int size, Request<T, R>* &mergedArray){
 	 
 		if (this->type == MergeType::DEVICE && this->device->isCudaAvailable()){
-			this->mergeGPU(arrA, arrB, size, mergedArray);
+			this->invokeGPUmerge(arrA, size, arrB, size, mergedArray); 
 		}
 		else{
 			this->mergeCPU(arrA, arrB, size, mergedArray);
@@ -137,20 +137,16 @@ public:
 
 		for (it = kMap->begin(); it != kMap->end(); it++){
 			std::string fn = it->second;
-			  
-			std::cout << "query filename " << fn << std::endl;
-
+			 
 			if (requests.empty()){
 				break;
 			}
 			else{
 				this->fileAccess->readFile(fn, ctree);
-				std::cout << "Tree size " << ctree.size() << std::endl;
 				this->processReadQuery(requests, completed, ctree);
 			}
 		} 
 
-		std::cout << "Requests: " << requests.size() << std::endl;
 
 		//copy completed requests to pinging requests
 		int completedSize = completed.size();
@@ -162,8 +158,6 @@ public:
 
 			completedSize--;
 		}
-
-		std::cout << "Requests: " << requests.size() << std::endl;
 	};
 
 	
@@ -223,12 +217,14 @@ public:
 		}
 		else{
 			//save to file to disk 
-			int length = std::pow(2, currLevel) * this->level;
+			int length = std::pow(2, currLevel - 1) * this->level;
 			std::cout << length << std::endl;
 			T bot = ptr[0].getKey();
 			T top = ptr[length - 1].getKey();  
 
-			std::string fn = Utils<T, R>::createFileName(bot, top, std::pow(2, currLevel));
+			std::cout << "Top " << top << " bottom " << bot << std::endl;
+
+			std::string fn = Utils<T, R>::createFileName(bot, top, std::pow(2, currLevel - 1));
 			  
 			fileAccess->writeFile(fn, ptr, length);
 			
