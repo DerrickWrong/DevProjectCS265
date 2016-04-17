@@ -36,7 +36,7 @@ Request<int, int>* &generateReadRequest(int size, int offset){
 
 	long timestamp = std::time(0);
 
-	for (int i = 0; i < size; i++){
+	for (int i = 0; i < size; i++){ 
 		Request<int, int> temp(timestamp, i + offset, RequestType::QUERY);
 		ptr[i] = temp;
 	}
@@ -82,7 +82,7 @@ TEST(SingleProcessor, ReadLoadTest){
 	//create read requests
 	Request<int, int> *readReqs;
 	int size = 1024;
-	readReqs = generateReadRequest(size, 1024);
+	readReqs = generateReadRequest(size, 0);
 
 	//submit them to the processor
 	for (int i = 0; i < size; i++){
@@ -132,7 +132,7 @@ TEST(SingleProcessorTest, mixLoadTest){
 	
 	//process only requests between 1m to 2m
 	RangePredicate<int> *rangePred;
-	rangePred = new RangePredicate<int>(2048, 4096);
+	rangePred = new RangePredicate<int>(0, 4096);
 
 	Processor<int, int> processor(1024, 2, "D:\\LSM\\MixLoad", MergeType::DEVICE, rangePred);
 
@@ -160,7 +160,7 @@ TEST(SingleProcessorTest, mixLoadTest){
 	ASSERT_EQ(processor.getWork().size(), 0);
 
 	//it gets filtered
-	ASSERT_EQ(processor.getQueryWork().size(), 0);
+	ASSERT_EQ(processor.getQueryWork().size(), readSize);
 
 	//free resource
 	delete insertReqs;
