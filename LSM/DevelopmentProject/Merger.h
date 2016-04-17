@@ -48,7 +48,7 @@ private:
 	};
 	 
 	int computeLevel(int len){
-		return len / this->level;
+		return len / (this->level * this->ratio);
 	};
 
 public:
@@ -244,7 +244,7 @@ public:
 	void merge() {
 
 		//check if the file meets the file limit (1st level) 
-		if (this->C0->size() < this->level){
+		if (this->C0->size() < (this->level * this->ratio)){
 			return;
 		}
 

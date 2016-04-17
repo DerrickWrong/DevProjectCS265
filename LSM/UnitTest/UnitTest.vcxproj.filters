@@ -24,12 +24,6 @@
     <ClCompile Include="DeviceMergeUnitTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MergerTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestBloomFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TestFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
