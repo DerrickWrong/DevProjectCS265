@@ -47,6 +47,10 @@ private:
 		}
 	};
 	 
+	int computeLevel(int len){
+		return len / this->level;
+	};
+
 public:
 	 
 	/*
@@ -70,7 +74,7 @@ public:
 	/*
 	* Overload of constructor
 	*/
-	Merger(std::string fdir) : Merger(1024, 2, fdir, MergeType::ONBOARD)  {};
+	Merger(std::string fdir) : Merger(1024, 1, fdir, MergeType::ONBOARD)  {};
 
 	/*
 	* Destructor 
@@ -164,9 +168,12 @@ public:
 	/*
 	* Recursive Merging all the tree
 	*/
-	void recursiveMerge(int currLevel, Request<T, R>* &Ltree, std::map<int, std::string, std::function<bool(const int&, const int&)>> *bloomFilter){
+	void recursiveMerge(int currLevel, Request<T, R>* &Ltree, std::map<int, std::string, std::function<bool(const int&, const int&)>> *bloomFilter, int mapSize){
 	   
 		Request<T, R> *ptr = nullptr;
+
+		int length = mapSize;
+		currLevel = computeLevel(length);
 
 		if (bloomFilter->count(currLevel) == 1){
 			
@@ -183,9 +190,10 @@ public:
 			  
 			this->filter->remove(currLevel); // remove the old file
 
-			//invoke merge
-			int le = currLevel * this->level; 
-			this->requestMerge(Ltree, B, le, ptr);
+			//invoke merge 
+			this->requestMerge(Ltree, B, mapSize, ptr);
+
+			length = mapSize + Bsize;
 
 			//increment level
 			currLevel = currLevel + 1;
@@ -196,11 +204,10 @@ public:
 		}
 		else{  
 			//save to file
-			int length = std::pow(2, currLevel - 1) * this->level;
 			T bot = Ltree[0].getKey();
 			T top = Ltree[length - 1].getKey();
-
-			std::string fn = Utils<T, R>::createFileName(bot, top, std::pow(2, currLevel - 1));
+			 
+			std::string fn = Utils<T, R>::createFileName(bot, top, currLevel);
 
 			fileAccess->writeFile(fn, Ltree, length);
 
@@ -212,17 +219,15 @@ public:
 		//determine if it needs to make another merge
 		if (bloomFilter->count(currLevel) == 1){
 			
-			this->recursiveMerge(currLevel, ptr, bloomFilter);
+			this->recursiveMerge(currLevel, ptr, bloomFilter, length);
 
 		}
 		else{
 			//save to file to disk 
-			int length = std::pow(2, currLevel - 1) * this->level;
-			std::cout << length << std::endl;
 			T bot = ptr[0].getKey();
 			T top = ptr[length - 1].getKey();  
 
-			std::string fn = Utils<T, R>::createFileName(bot, top, std::pow(2, currLevel - 1));
+			std::string fn = Utils<T, R>::createFileName(bot, top, computeLevel(length));
 			  
 			fileAccess->writeFile(fn, ptr, length);
 			
@@ -257,7 +262,7 @@ public:
 
 		Utils<T, R>::createArray(*this->C0, A, Asize); 
 
-		this->recursiveMerge(currLevel, A, diskMap);
+		this->recursiveMerge(currLevel, A, diskMap, Asize);
 
 		//free resources
 		delete A;

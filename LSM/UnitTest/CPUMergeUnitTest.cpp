@@ -232,3 +232,35 @@ TEST(CPUTest, Merge2097152Test){
 	delete arrB;
 	delete sol;
 }
+
+TEST(CPUTest, Merge4194304Test){
+
+	int size = 4194304;
+
+	Request<int, int> *arrA = generateArrCPU(size, 10);
+	Request<int, int> *arrB = generateArrCPU(size, 0);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
+
+	merger.mergeCPU(arrA, arrB, size, sol);
+
+	delete arrA;
+	delete arrB;
+	delete sol;
+}
+
+TEST(CPUTest, Merge8388608Test){
+
+	int size = 8388608;
+
+	Request<int, int> *arrA = generateArrCPU(size, 10);
+	Request<int, int> *arrB = generateArrCPU(size, 0);
+	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
+	Merger<int, int> merger("D:\\LSM");
+
+	merger.mergeCPU(arrA, arrB, size, sol);
+
+	delete arrA;
+	delete arrB;
+	delete sol;
+}

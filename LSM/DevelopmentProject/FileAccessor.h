@@ -35,7 +35,7 @@ public:
 		 
 		T _key;
 		P _val;
-		long timestamp;
+		long timestamp = 0L;
 
 		std::ifstream myFile(fileFullDir, std::ios::in | std::ios::binary);
 

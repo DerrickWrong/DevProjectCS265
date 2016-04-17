@@ -37,13 +37,39 @@ Request<int, int>* &generateReadRequest(int size, int offset){
 	long timestamp = std::time(0);
 
 	for (int i = 0; i < size; i++){
-		Request<int, int> temp(timestamp, i, RequestType::QUERY);
+		Request<int, int> temp(timestamp, i + offset, RequestType::QUERY);
 		ptr[i] = temp;
 	}
 
 	return ptr;
 }
 
+
+class SingleProcessorFixture : public ::testing::Test{
+
+protected:
+	SingleProcessorFixture(){
+	}
+
+	virtual void SetUp() {
+		Request<int, int> *insertReqs;
+		int size = 1024;
+
+		insertReqs = generateInsertRequest(size, 0);
+
+		FileAccessor<int, int> fa("D:\\LSM\\MixLoad");
+
+		fa.writeFile("0_1024-1", insertReqs, size);
+
+		delete insertReqs;
+	}
+
+	virtual void TearDown() {
+		// Code here will be called immediately after each test (right
+		// before the destructor).
+	}
+
+};
 
 TEST(SingleProcessor, ReadLoadTest){
 
@@ -72,36 +98,13 @@ TEST(SingleProcessor, ReadLoadTest){
 
 }
  
-TEST(SingleProcessor, insert1024){
-
-	//process only requests between 1m to 2m
-	RangePredicate<int> *rangePred;
-	rangePred = new RangePredicate<int>(0, 1024);
-
-	Processor<int, int> processor(1024, 2, "D:\\LSM\\1m_2m", MergeType::DEVICE, rangePred);
-
-	//create insert requests
-	Request<int, int> *insertReqs;
-	int size = 1024;
-	insertReqs = generateInsertRequest(size, 0);
-
-	//submit them to the processor
-	for (int i = 0; i < size; i++){
-		processor.consume(insertReqs[i]);
-	}
-
-	processor.execute();
-
-	delete insertReqs;
-}
-
-TEST(SingleProcessor, insertLoadTest){
+TEST_F(SingleProcessorFixture, insertLoadTest){
 
 	//process only requests between 1m to 2m
 	RangePredicate<int> *rangePred;
 	rangePred = new RangePredicate<int>(0, 2048);
 
-	Processor<int, int> processor(1024, 2, "D:\\LSM\\1m_2m", MergeType::DEVICE, rangePred);
+	Processor<int, int> processor(1024, 2, "D:\\LSM\\MixLoad", MergeType::DEVICE, rangePred);
 
 	//create insert requests
 	Request<int, int> *insertReqs;
@@ -120,55 +123,50 @@ TEST(SingleProcessor, insertLoadTest){
 	  
 	ASSERT_EQ(processor.getWork().size(), 0);
 
-	boost::filesystem::path p("D:\\LSM\\1m_2m\\0_2047-2");
-	boost::filesystem::remove_all(p);
-
 	//free resource
 	delete insertReqs;   
 	  
 } 
 
-/*
-TEST(SingleProcessor, mixLoadTest){
+TEST(SingleProcessorTest, mixLoadTest){
 	
 	//process only requests between 1m to 2m
 	RangePredicate<int> *rangePred;
-	rangePred = new RangePredicate<int>(0, 4096);
+	rangePred = new RangePredicate<int>(2048, 4096);
 
 	Processor<int, int> processor(1024, 2, "D:\\LSM\\MixLoad", MergeType::DEVICE, rangePred);
 
-	//create insert requests
+	//create insert requests for 1024+
 	Request<int, int> *insertReqs;
-	int size = 1024;
-	insertReqs = generateInsertRequest(size, 2048);
+	int readSize = 1024;
+	int writeSize = 2048;
+	insertReqs = generateInsertRequest(writeSize, 2048);
+
+	for (int i = 0; i < writeSize; i++){
+		processor.consume(insertReqs[i]);
+	}
 
 	//create read requests
 	Request<int, int> *readReqs;
-	readReqs = generateReadRequest(size, 0);
+	readReqs = generateReadRequest(readSize, 0);
 
 	//submit them to the processor
-	
-	for (int i = 0; i < size; i++){
-
-		//std::cout << "insert request: key -> " << insertReqs[i].getKey() << " value -> " << insertReqs[i].getValue() << std::endl;
-		//std::cout << "read request: key -> " << readReqs[i].getKey() << " value -> " << readReqs[i].getValue() << std::endl;
-		processor.consume(insertReqs[i]);
+	for (int i = 0; i < readSize; i++){
 		processor.consume(readReqs[i]);
 	}
 	 
 	processor.execute();
-
-	
-	for (int i = 0; i < size; i++){ 
-		std::cout << "Result Read Request: key -> " << readReqs[i].getKey() << " value -> " << readReqs[i].getValue() << std::endl; 
-	}
  
 	ASSERT_EQ(processor.getWork().size(), 0);
-	ASSERT_EQ(processor.getQueryWork().size(), 1024);
+
+	//it gets filtered
+	ASSERT_EQ(processor.getQueryWork().size(), 0);
 
 	//free resource
 	delete insertReqs;
 	delete readReqs;
+
+	boost::filesystem::path p("D:\\LSM\\MixLoad\\0_4095-4");
+	boost::filesystem::remove_all(p);
 	
 }
-*/
