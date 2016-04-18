@@ -20,5 +20,7 @@ public:
 }; 
 
 template class __declspec(dllexport) CudaDevice<int, int>; 
+template class __declspec(dllexport) CudaDevice<long, long>;
+template class __declspec(dllexport) CudaDevice<double, double>;
 
 #endif

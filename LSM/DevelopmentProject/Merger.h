@@ -86,6 +86,12 @@ public:
 		delete this->fileAccess;
 	};
 
+	//testing only!
+	std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>>* &getMap(){
+		return this->C0;
+	}
+
+
 	/*
 	* Process Read Query 
 	*/

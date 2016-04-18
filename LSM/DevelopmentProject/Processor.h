@@ -7,6 +7,9 @@
 #include <iostream>
 #include "Merger.h"
 
+#include <functional>
+#include <map>
+
 /**********************
 * Processor is the actual worker that does all the insert,
 * delete and query (view). Each Processor is independent 
@@ -86,6 +89,9 @@ public:
 		return this->work;
 	};
 
+	std::map<T, Request<T, R>, std::function<bool(const T&, const T&)>>* &getMap(){
+		return this->merger->getMap();
+	}
 
 };
 

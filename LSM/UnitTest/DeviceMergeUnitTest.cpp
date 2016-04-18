@@ -39,8 +39,6 @@ TEST(GPUTest, Merge1024Test){
 
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol); 
 
-
-
 	delete arrA;
 	delete arrB;
 	delete sol;
