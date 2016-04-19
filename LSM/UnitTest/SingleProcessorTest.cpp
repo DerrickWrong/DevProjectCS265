@@ -129,8 +129,8 @@ TEST_F(SingleProcessorFixture, insertLoadTest){
 } 
 
 TEST_F(SingleProcessorFixture, mixLoadTest){
-	
-	createFiles("0_2048-2", 2048, 0, "D:\\LSM\\MixLoad");
+
+	createFiles("0_2047-2", 2048, 0, "D:\\LSM\\MixLoad");
 
 	RangePredicate<int> *rangePred;
 	rangePred = new RangePredicate<int>(0, 4096);

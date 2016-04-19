@@ -231,9 +231,16 @@ public:
 		else{
 			//save to file to disk 
 			T bot = ptr[0].getKey();
-			T top = ptr[length - 1].getKey();  
+			T top = ptr[length - 1].getKey();
 
-			std::string fn = Utils<T, R>::createFileName(bot, top, computeLevel(length));
+			int len = double (top - bot + 1.0);
+			len = len / (this->ratio * this->level);
+
+			if (len == 0){
+				len = 1;
+			} 
+			  
+			std::string fn = Utils<T, R>::createFileName(bot, top, len);
 			  
 			fileAccess->writeFile(fn, ptr, length);
 			
