@@ -36,7 +36,7 @@ TEST(CPUTest, Merge1024Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeCPU(arrA, arrB, size, sol);
+	merger.mergeCPU(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -52,9 +52,7 @@ TEST(CPUTest, Merge2048Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeCPU(arrA, arrB, size, sol);
-
-
+	merger.mergeCPU(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -70,8 +68,7 @@ TEST(CPUTest, Merge4096Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeCPU(arrA, arrB, size, sol);
-
+	merger.mergeCPU(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -87,9 +84,7 @@ TEST(CPUTest, Merge8192Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeCPU(arrA, arrB, size, sol);
-
-
+	merger.mergeCPU(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -106,8 +101,7 @@ TEST(CPUTest, Merge16384Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeCPU(arrA, arrB, size, sol);
-
+	merger.mergeCPU(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -123,7 +117,7 @@ TEST(CPUTest, Merge32768Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeCPU(arrA, arrB, size, sol);
+	merger.mergeCPU(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -139,8 +133,7 @@ TEST(CPUTest, Merge65536Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeCPU(arrA, arrB, size, sol);
-
+	merger.mergeCPU(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -156,9 +149,7 @@ TEST(CPUTest, Merge131072Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeCPU(arrA, arrB, size, sol);
-
-
+	merger.mergeCPU(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -174,8 +165,7 @@ TEST(CPUTest, Merge262144Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeCPU(arrA, arrB, size, sol);
-
+	merger.mergeCPU(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -191,9 +181,7 @@ TEST(CPUTest, Merge524288Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeCPU(arrA, arrB, size, sol);
-
-
+	merger.mergeCPU(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -209,8 +197,7 @@ TEST(CPUTest, Merge1048576Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeCPU(arrA, arrB, size, sol);
-
+	merger.mergeCPU(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -226,7 +213,7 @@ TEST(CPUTest, Merge2097152Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeCPU(arrA, arrB, size, sol);
+	merger.mergeCPU(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -242,7 +229,7 @@ TEST(CPUTest, Merge4194304Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeCPU(arrA, arrB, size, sol);
+	merger.mergeCPU(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;
@@ -258,7 +245,7 @@ TEST(CPUTest, Merge8388608Test){
 	Request<int, int> *sol = (Request<int, int>*)malloc(sizeof(Request<int, int>) * size * 2);
 	Merger<int, int> merger("D:\\LSM");
 
-	merger.mergeCPU(arrA, arrB, size, sol);
+	merger.mergeCPU(arrA, size, arrB, size, sol);
 
 	delete arrA;
 	delete arrB;

@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClCompile Include="CPUMergeUnitTest.cpp" />
     <ClCompile Include="DeviceMergeUnitTest.cpp" />
+    <ClCompile Include="DiskWorkLoadTest.cpp" />
     <ClCompile Include="InMemoryWorkLoadTest.cpp" />
     <ClCompile Include="SingleProcessorTest.cpp" />
     <ClCompile Include="TestByte.cpp" />

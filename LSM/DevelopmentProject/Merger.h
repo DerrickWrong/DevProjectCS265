@@ -37,13 +37,13 @@ private:
 
 	FileAccessor<T, R> *fileAccess;
 
-	void requestMerge(Request<T, R>* &arrA, Request<T, R>* &arrB, int size, Request<T, R>* &mergedArray){
+	void requestMerge(Request<T, R>* &arrA, int arrAsize, Request<T, R>* &arrB, int arrBsize, Request<T, R>* &mergedArray){
 	 
 		if (this->type == MergeType::DEVICE && this->device->isCudaAvailable()){
-			this->invokeGPUmerge(arrA, size, arrB, size, mergedArray); 
+			this->invokeGPUmerge(arrA, arrAsize, arrB, arrBsize, mergedArray);
 		}
 		else{
-			this->mergeCPU(arrA, arrB, size, mergedArray);
+			this->mergeCPU(arrA, arrAsize, arrB, arrBsize, mergedArray);
 		}
 	};
 	 
@@ -174,11 +174,11 @@ public:
 	/*
 	* Recursive Merging all the tree
 	*/
-	void recursiveMerge(int currLevel, Request<T, R>* &Ltree, std::map<int, std::string, std::function<bool(const int&, const int&)>> *bloomFilter, int mapSize){
+	void recursiveMerge(int currLevel, Request<T, R>* &Ltree, std::map<int, std::string, std::function<bool(const int&, const int&)>> *bloomFilter, int Lsize){
 	   
 		Request<T, R> *ptr = nullptr;
 
-		int length = mapSize;
+		int length = Lsize;
 		currLevel = computeLevel(length);
 
 		if (bloomFilter->count(currLevel) == 1){
@@ -197,9 +197,9 @@ public:
 			this->filter->remove(currLevel); // remove the old file
 
 			//invoke merge 
-			this->requestMerge(Ltree, B, mapSize, ptr);
+			this->requestMerge(Ltree, Lsize, B, Bsize, ptr);
 
-			length = mapSize + Bsize;
+			length = Lsize + Bsize;
 
 			//increment level
 			currLevel = currLevel + 1;
@@ -280,18 +280,19 @@ public:
 	/*
 	* CPU merge version
 	*/
-	void mergeCPU(Request<T, R>* &arrA, Request<T, R>* &arrB, int size, Request<T, R>* &mergedArray){
-		
-		int msize = size * 2;
-
+	void mergeCPU(Request<T, R>* &arrA, int arrAsize, Request<T, R>* &arrB, int arrBsize, Request<T, R>* &mergedArray){
+		 
 		//create dynamic array
-		mergedArray = (Request<T, R>*)malloc(sizeof(Request<T, R>) * msize);
+		mergedArray = (Request<T, R>*)malloc(sizeof(Request<T, R>) * (arrAsize + arrBsize));
 
 		std::vector<Request<T, R>> vec;
 
 		//store to container
-		for (int i = 0; i < size; i++){
-			vec.push_back(arrA[i]);
+		for (int i = 0; i < arrAsize; i++){
+			vec.push_back(arrA[i]); 
+		}
+
+		for (int i = 0; i < arrBsize; i++){ 
 			vec.push_back(arrB[i]);
 		}
 		 
@@ -305,7 +306,7 @@ public:
 		int counter = 0;
 		
 		//write data to array
-		while (counter < msize){
+		while (counter < arrAsize + arrBsize){
 			mergedArray[counter] = vec.front();
 			vec.pop_back();
 			counter++;
@@ -316,17 +317,17 @@ public:
 	/*
 	* GPU merge version
 	*/
-	void mergeGPU(Request<T, R>* arrA, Request<T, R>* &arrB, int size, Request<T, R>* mergedArray, int arrSize){
+	void mergeGPU(Request<T, R>* arrA, int arrAsize, Request<T, R>* &arrB, int arrBsize, Request<T, R>* mergedArray){
 	  
 		//create index for A
-		int *idxB = new int[size]; 
+		int *idxB = new int[arrBsize];
 
-		for (int i = 0; i < size; i++){ 
+		for (int i = 0; i < arrBsize; i++){
 			idxB[i] = i;
 		}
 
 		//invoke merge kernel to find B indices in respective to A
-		this->device->mergeKernel(arrA, (arrSize - size), arrB, idxB, size);
+		this->device->mergeKernel(arrA, arrAsize, arrB, idxB, arrBsize);
   
 		int mIdx = 0;
 
@@ -334,7 +335,7 @@ public:
 		int bix = 0;
 
 		//place merged item into an array
-		while (mIdx < arrSize){
+		while (mIdx < (arrAsize + arrBsize)){
 		
 			if (idxB[bix] == mIdx){
 				mergedArray[mIdx] = arrB[bix];
@@ -387,10 +388,10 @@ public:
 
 		//mix A and B 
 		if (arrAsize < arrBsize){
-			mergeGPU(arrB, arrA, arrAsize, mergedArray, (arrAsize + arrBsize));
+			mergeGPU(arrB, arrBsize, arrA, arrAsize, mergedArray);
 		}
 		else{
-			mergeGPU(arrA, arrB, arrBsize, mergedArray, (arrAsize + arrBsize));
+			mergeGPU(arrA, arrAsize, arrB, arrBsize, mergedArray);
 		}
 
 	};
