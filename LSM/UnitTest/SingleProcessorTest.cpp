@@ -2,6 +2,7 @@
 #include "Processor.h"
 #include "RangePredicate.h"
 #include <time.h>
+#include <deque>
 
 #include "Utils.h"
 
@@ -87,7 +88,14 @@ TEST(SingleProcessor, ReadLoadTest){
 
 	processor.execute();
 
+	std::deque<Request<int, int>> rdeque = processor.getQueryWork();
+
 	ASSERT_EQ(processor.getQueryWork().size(), 1024);
+
+	//validate content in value
+	for (int i = 0; i < rdeque.size(); i++){
+		EXPECT_EQ(i, rdeque.at(i).getValue());
+	}
 
 	//free resource
 	delete readReqs;
@@ -123,6 +131,7 @@ TEST_F(SingleProcessorFixture, insertLoadTest){
 	//free resource
 	delete insertReqs;  
 
+	//delete saved files
 	boost::filesystem::path p("D:\\LSM\\MixLoad\\0_2047-2");
 	boost::filesystem::remove_all(p);
 	  
@@ -160,9 +169,15 @@ TEST_F(SingleProcessorFixture, mixLoadTest){
  
 	ASSERT_EQ(processor.getWork().size(), 0);
 
-	//it gets filtered
-	ASSERT_EQ(processor.getQueryWork().size(), readSize);
+	std::deque<Request<int, int>> rdeque = processor.getQueryWork();
 
+	//it gets filtered
+	ASSERT_EQ(readSize, rdeque.size());
+
+	//validate content in value
+	for (int i = 0; i < rdeque.size(); i++){
+		EXPECT_EQ(i, rdeque.at(i).getValue());
+	}
 	//free resource
 	delete insertReqs;
 	delete readReqs;
@@ -189,9 +204,18 @@ TEST_F(SingleProcessorFixture, RepeatedTest){
 		processor.consume(requests[i]);
 	}
 
-	processor.execute(); 
+	delete requests;
+
+	generateInsertRequest(size, 1024, requests);
+
+	//repeat insert for two times
+	for (int i = 0; i < size; i++){
+		processor.consume(requests[i]);
+	}
 
 	delete requests;
+
+	processor.execute(); 
 
 	boost::filesystem::path p("D:\\LSM\\MixLoad\\1024_10023-1");
 	boost::filesystem::remove_all(p);

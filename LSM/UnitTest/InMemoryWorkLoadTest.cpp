@@ -15,14 +15,14 @@ protected:
 	RangePredicate<int> *range;
 
 	InMemory(){
-		this->range = new RangePredicate<int>(0, 10000);
-		this->processor = new Processor<int, int>(10000, 1, "D:\\LSM\\LoadTest", MergeType::DEVICE, this->range);
+		this->range = new RangePredicate<int>(0, 5000000);
+		this->processor = new Processor<int, int>(5000000, 1, "D:\\LSM\\LoadTest", MergeType::DEVICE, this->range);
 
 		Request<int, int> *ptr;
 
-		generateInsertRequest(5000, 0, ptr);
+		generateInsertRequest(1000000, 0, ptr);
 
-		for (int i = 0; i < 5000; i++){
+		for (int i = 0; i < 1000000; i++){
 			this->processor->consume(ptr[i]);
 		}
 
@@ -68,7 +68,7 @@ TEST_F(InMemory, UpdateTest){
 
 	C0 = processor->getMap();
 
-	EXPECT_EQ(5000, C0->size());
+	EXPECT_EQ(1000000, C0->size());
 	 
 }
 
@@ -76,31 +76,26 @@ TEST_F(InMemory, ReadTest){
 
 	Request<int, int> *readRequests;
 
-	generateReadRequest(5000, 0, readRequests);
+	generateReadRequest(1000000, 0, readRequests);
 
-	for (int i = 0; i < 5000; i++){
+	for (int i = 0; i < 1000000; i++){
 		this->processor->consume(readRequests[i]);
 	}
 
 	delete readRequests;
 
 	this->processor->execute();
-	 
-	std::deque<Request<int, int>> buf = this->processor->getQueryWork();
-
-	for (int i = 0; i < buf.size(); i++){
-		EXPECT_EQ(i, buf[i].getValue());
-	}
+	   
 }
 
 TEST_F(InMemory, ReadUpdateTest){
 
 	Request<int, int> *readRequests, *insertRequests;
 
-	generateReadRequest(5000, 0, readRequests);
-	generateInsertRequest(5000, 2500, insertRequests);
+	generateReadRequest(1000000, 0, readRequests);
+	generateInsertRequest(1000000, 500000, insertRequests);
 
-	for (int i = 0; i < 5000; i++){
+	for (int i = 0; i < 1000000; i++){
 		this->processor->consume(readRequests[i]);
 		this->processor->consume(insertRequests[i]);
 	}
@@ -109,21 +104,5 @@ TEST_F(InMemory, ReadUpdateTest){
 	delete insertRequests;
 
 	this->processor->execute();
-
-	//validate the results
-	std::deque<Request<int, int>> rbuf = this->processor->getQueryWork();
-	std::deque<Request<int, int>> wbuf = this->processor->getWork();
-
-	EXPECT_EQ(5000, rbuf.size());
-
-	for (int i = 0; i < rbuf.size(); i++){
-		EXPECT_EQ(i, rbuf[i].getValue());
-	}
-
-	std::map<int, Request<int, int>, std::function<bool(const int&, const int&)>> *C0;
-
-	C0 = processor->getMap();
-
-	EXPECT_EQ(7500, C0->size());
-	  
+	 
 }
