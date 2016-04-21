@@ -170,6 +170,6 @@ TEST_F(InDisk, ReadRandomTest){
 	boost::filesystem::remove_all(p);
 
 	boost::filesystem::path p2("D:\\LSM\\LoadTest\\40000_59999-2");
-	boost::filesystem::remove_all(p);
+	boost::filesystem::remove_all(p2);
 
 }
