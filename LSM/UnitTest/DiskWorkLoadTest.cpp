@@ -15,7 +15,7 @@ protected:
 	RangePredicate<int> *range;
 
 	InDisk(){
-		this->range = new RangePredicate<int>(0, 10000);
+		this->range = new RangePredicate<int>(0, 1000000);
 		this->processor = new Processor<int, int>(10000, 1, "D:\\LSM\\LoadTest", MergeType::DEVICE, this->range);
 
 		Request<int, int> *ptr;
@@ -62,37 +62,6 @@ protected:
 	}
 
 };
-
-TEST_F(InDisk, ReadTest){
-
-	//create insert requests
-	Request<int, int> *data;
-
-	generateInsertRequest(7500, 2500, data);
-
-	for (int i = 0; i < 7500; i++){
-		this->processor->consume(data[i]);
-	}
-
-	delete data;
-
-	//save to file
-	this->processor->execute();
-
-	//generate read requests
-	generateReadRequest(10000, 0, data);
-
-	for (int i = 0; i < 10000; i++){
-		this->processor->consume(data[i]);
-	}
-
-	delete data;
-
-	//execute read
-	this->processor->execute();
-
-	EXPECT_EQ(10000, this->processor->getQueryWork().size());
-}
 
 /*
 * Create update to previous file on disk
@@ -143,4 +112,64 @@ TEST_F(InDisk, ReadInsertTest){
 
 	boost::filesystem::path p("D:\\LSM\\LoadTest\\0_9999-1");
 	boost::filesystem::remove_all(p);
+}
+
+
+TEST_F(InDisk, ReadRandomTest){
+
+	// 10k to 20k
+	Request<int, int> *data; 
+
+	generateInsertRequest(5000, 5000, data);
+
+	for (int i = 0; i < 5000; i++){
+		processor->consume(data[i]);
+	}
+
+	delete data;
+
+	//execute
+	processor->execute();
+	
+	// 40k to 60k
+	generateInsertRequest(20000, 40000, data);
+	
+	for (int i = 0; i < 20000; i++){
+		this->processor->consume(data[i]);
+	}
+
+	//execute
+	this->processor->execute();
+	delete data;
+ 
+	//Generate Read Requests: 0 - 1000 read requests 
+	generateReadRequest(1000, 0, data);
+
+	for (int i = 0; i < 1000; i++){
+		this->processor->consume(data[i]);
+	}
+
+	delete data;
+
+	//Generate read requests: 50000 - 51000 read requests
+	generateReadRequest(1000, 51000, data);
+
+	for (int i = 0; i < 1000; i++){
+		this->processor->consume(data[i]);
+	}
+
+	delete data;
+
+	//run the read requests
+	this->processor->execute();
+
+	EXPECT_EQ(2000, this->processor->getQueryWork().size());
+
+	//remove old files
+	boost::filesystem::path p("D:\\LSM\\LoadTest\\0_9999-1");
+	boost::filesystem::remove_all(p);
+
+	boost::filesystem::path p2("D:\\LSM\\LoadTest\\40000_59999-2");
+	boost::filesystem::remove_all(p);
+
 }

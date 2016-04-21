@@ -78,7 +78,7 @@ public:
 	/*
 	* Get file size
 	*/
-	std::map<int, std::string, std::function<bool(const int&, const int&)>> *getLevelMap(){
+	std::map<int, std::string, std::function<bool(const int&, const int&)>>* &getLevelMap(){
 		
 		return this->files;
 	};

@@ -132,6 +132,10 @@ public:
 	*/
 	void query(std::deque<Request<T, R>> &requests) {
 		
+		if (requests.empty()){
+			return;
+		}
+
 		//check C0 
 		std::deque<Request<T, R>> completed;
 		
@@ -174,14 +178,16 @@ public:
 	/*
 	* Recursive Merging all the tree
 	*/
-	void recursiveMerge(int currLevel, Request<T, R>* &Ltree, std::map<int, std::string, std::function<bool(const int&, const int&)>> *bloomFilter, int Lsize){
+	void recursiveMerge(int currLevel, Request<T, R>* &Ltree, std::map<int, std::string, std::function<bool(const int&, const int&)>>* &bloomFilter, int Lsize){
 	   
 		Request<T, R> *ptr = nullptr;
 
 		int length = Lsize;
-		currLevel = computeLevel(length);
+		currLevel = computeLevel(length); 
 
-		if (bloomFilter->count(currLevel) == 1){
+		auto search = bloomFilter->find(currLevel);
+
+		if (search != bloomFilter->end()){
 			
 			Request<T, R>* B = nullptr;
 			int Bsize = 0;
@@ -212,7 +218,7 @@ public:
 			//save to file
 			T bot = Ltree[0].getKey();
 			T top = Ltree[length - 1].getKey();
-			 
+
 			std::string fn = Utils<T, R>::createFileName(bot, top, currLevel);
 
 			fileAccess->writeFile(fn, Ltree, length);
@@ -274,12 +280,11 @@ public:
 		int Asize = 0;
 
 		Utils<T, R>::createArray(*this->C0, A, Asize); 
-
+		 
 		this->recursiveMerge(currLevel, A, diskMap, Asize);
 
 		//free resources
 		delete A;
-		delete diskMap;
 		this->C0->clear();
 	};
 
