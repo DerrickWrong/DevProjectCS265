@@ -367,7 +367,7 @@ public:
 
 	void invokeGPUmerge(Request<T, R>* arrA, int arrAsize, Request<T, R>* arrB, int arrBsize, Request<T, R>* &mergedArray){
 	
-		mergedArray = (Request<int, int>*)malloc(sizeof(Request<int, int>) * (arrAsize + arrBsize));
+		mergedArray = (Request<T, R>*)malloc(sizeof(Request<T, R>) * (arrAsize + arrBsize));
 
 		//append A to the end of B
 		if ((arrA[arrAsize - 1].getKey() < arrB[0].getKey())){
