@@ -58,7 +58,7 @@ TEST(IOTest, testWrite_1024){
 
 	fa.writeFile(filename, dummy, dataSize);
 
-	delete dummy;
+	delete [] dummy;
  
 }
 
@@ -74,7 +74,7 @@ TEST(IOTest, testWrite_2048){
 
 	fa.writeFile(filename, dummy, dataSize);
 
-	delete dummy;
+	delete [] dummy;
 
 }
 
@@ -90,7 +90,7 @@ TEST(IOTest, testWrite_4096){
 
 	fa.writeFile(filename, dummy, dataSize);
 
-	delete dummy;
+	delete [] dummy;
 
 }
 
@@ -106,7 +106,7 @@ TEST(IOTest, testWrite_8192){
 
 	fa.writeFile(filename, dummy, dataSize);
 
-	delete dummy;
+	delete [] dummy;
 
 }
 
@@ -122,7 +122,7 @@ TEST(IOTest, testWrite_16384){
 
 	fa.writeFile(filename, dummy, dataSize);
 
-	delete dummy;
+	delete [] dummy;
 
 }
 
@@ -138,7 +138,7 @@ TEST(IOTest, testWrite_32768){
 
 	fa.writeFile(filename, dummy, dataSize);
 
-	delete dummy;
+	delete [] dummy;
 
 }
 
@@ -154,7 +154,7 @@ TEST(IOTest, testWrite_65536){
 
 	fa.writeFile(filename, dummy, dataSize);
 
-	delete dummy;
+	delete [] dummy;
 
 }
 
@@ -170,7 +170,7 @@ TEST(IOTest, testWrite_131072){
 
 	fa.writeFile(filename, dummy, dataSize);
 
-	delete dummy;
+	delete [] dummy;
 
 }
 
@@ -186,7 +186,7 @@ TEST(IOTest, testWrite_262144){
 
 	fa.writeFile(filename, dummy, dataSize);
 
-	delete dummy;
+	delete [] dummy;
 
 }
 
@@ -202,7 +202,7 @@ TEST(IOTest, testWrite_524288){
 
 	fa.writeFile(filename, dummy, dataSize);
 
-	delete dummy;
+	delete [] dummy;
 
 }
 
@@ -218,7 +218,7 @@ TEST(IOTest, testWrite_1048576){
 
 	fa.writeFile(filename, dummy, dataSize);
 
-	delete dummy;
+	delete [] dummy;
 
 }
 
@@ -234,7 +234,7 @@ TEST(IOTest, testWrite_2097152){
 
 	fa.writeFile(filename, dummy, dataSize);
 
-	delete dummy;
+	delete [] dummy;
 
 }
 
@@ -250,7 +250,7 @@ TEST(IOTest, testWrite_4194304){
 
 	fa.writeFile(filename, dummy, dataSize);
 
-	delete dummy;
+	delete [] dummy;
 
 }
 
@@ -266,7 +266,7 @@ TEST(IOTest, testWrite_8388608){
 
 	fa.writeFile(filename, dummy, dataSize);
 
-	delete dummy;
+	delete [] dummy;
 
 }
 

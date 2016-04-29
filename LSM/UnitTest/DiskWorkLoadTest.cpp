@@ -77,7 +77,7 @@ TEST_F(InDisk, InsertTest){
 		this->processor->consume(data[i]);
 	}
 
-	delete data;
+	delete [] data;
 
 	//save to file
 	this->processor->execute();
@@ -94,7 +94,7 @@ TEST_F(InDisk, ReadInsertTest){
 		this->processor->consume(data[i]);
 	}
 
-	delete data;
+	delete [] data;
 
 	//generate read requests
 	generateReadRequest(10000, 0, data);
@@ -103,7 +103,7 @@ TEST_F(InDisk, ReadInsertTest){
 		this->processor->consume(data[i]);
 	}
 
-	delete data;
+	delete [] data;
 
 	//execute
 	this->processor->execute();
@@ -126,7 +126,7 @@ TEST_F(InDisk, ReadRandomTest){
 		processor->consume(data[i]);
 	}
 
-	delete data;
+	delete [] data;
 
 	//execute
 	processor->execute();
@@ -140,7 +140,7 @@ TEST_F(InDisk, ReadRandomTest){
 
 	//execute
 	this->processor->execute();
-	delete data;
+	delete [] data;
  
 	//Generate Read Requests: 0 - 1000 read requests 
 	generateReadRequest(1000, 0, data);
@@ -149,7 +149,7 @@ TEST_F(InDisk, ReadRandomTest){
 		this->processor->consume(data[i]);
 	}
 
-	delete data;
+	delete [] data;
 
 	//Generate read requests: 50000 - 51000 read requests
 	generateReadRequest(1000, 51000, data);
@@ -158,7 +158,7 @@ TEST_F(InDisk, ReadRandomTest){
 		this->processor->consume(data[i]);
 	}
 
-	delete data;
+	delete [] data;
 
 	//run the read requests
 	this->processor->execute();

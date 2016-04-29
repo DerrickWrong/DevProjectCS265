@@ -20,7 +20,7 @@ void generateInsertRequest(int size, int offset, Request<int, int>* &ptr){
 
 	for (int i = 0; i < size; i++){
 		
-		Request<int, int> temp(timestamp, i + offset, i);
+		Request<int, int> temp(timestamp, i + offset, i + offset);
 		ptr[i] = temp;
 	}
 	 
@@ -38,35 +38,50 @@ void generateReadRequest(int size, int offset, Request<int, int>* &ptr){
 	}
 }
 
-class SingleProcessorFixture : public ::testing::Test{
+void createFiles(std::string name, int size, int offset, std::string baseDir){
+
+	Request<int, int> *insertReqs = NULL;
+
+	generateInsertRequest(size, offset, insertReqs);
+
+	FileAccessor<int, int> fa(baseDir);
+
+	fa.writeFile(name, insertReqs, size);
+
+	delete[] insertReqs;
+}
+
+class TradeOffStudy : public ::testing::Test{
 
 protected:
-	SingleProcessorFixture(){
-	}
+
+	TradeOffStudy(){}
 
 	virtual void SetUp() {
-	  
+		//create files
+		createFiles("0_1023-1", 1024, 0, "D:\\LSM\\MixLoad");
+		createFiles("2048_4097-2", 2048, 2048, "D:\\LSM\\MixLoad");
+		createFiles("8192_12287-4", 4096, 8192, "D:\\LSM\\MixLoad");
+		createFiles("20480_28671-8", 8192, 20480, "D:\\LSM\\MixLoad");
 	}
 
 	virtual void TearDown() {
 		// Code here will be called immediately after each test (right
 		// before the destructor).
+		//remove files
+		boost::filesystem::path p1("D:\\LSM\\MixLoad\\0_1023-1");
+		boost::filesystem::path p2("D:\\LSM\\MixLoad\\2048_4097-2");
+		boost::filesystem::path p3("D:\\LSM\\MixLoad\\8192_12287-4");
+		boost::filesystem::path p4("D:\\LSM\\MixLoad\\20480_28671-8");
+
+		boost::filesystem::remove_all(p1);
+		boost::filesystem::remove_all(p2);
+		boost::filesystem::remove_all(p3);
+		boost::filesystem::remove_all(p4);
 	}
-
-	void createFiles(std::string name, int size, int offset, std::string baseDir){
-	
-		Request<int, int> *insertReqs = NULL;
-
-		generateInsertRequest(size, offset, insertReqs);
-
-		FileAccessor<int, int> fa(baseDir);
-
-		fa.writeFile(name, insertReqs, size);
-
-		delete insertReqs;
-	}
-
+	 
 };
+
 
 TEST(SingleProcessor, ReadLoadTest){
 
@@ -98,11 +113,11 @@ TEST(SingleProcessor, ReadLoadTest){
 	}
 
 	//free resource
-	delete readReqs;
+	delete [] readReqs;
 
 }
  
-TEST_F(SingleProcessorFixture, insertLoadTest){
+TEST(SingleProcessorFixture, insertLoadTest){
 
 	createFiles("0_1024-1", 1024, 0, "D:\\LSM\\MixLoad");
 
@@ -129,7 +144,7 @@ TEST_F(SingleProcessorFixture, insertLoadTest){
 	ASSERT_EQ(processor.getWork().size(), 0);
 
 	//free resource
-	delete insertReqs;  
+	delete [] insertReqs;  
 
 	//delete saved files
 	boost::filesystem::path p("D:\\LSM\\MixLoad\\0_2047-2");
@@ -137,7 +152,7 @@ TEST_F(SingleProcessorFixture, insertLoadTest){
 	  
 } 
 
-TEST_F(SingleProcessorFixture, mixLoadTest){
+TEST(SingleProcessorFixture, mixLoadTest){
 
 	createFiles("0_2047-2", 2048, 0, "D:\\LSM\\MixLoad");
 
@@ -179,15 +194,15 @@ TEST_F(SingleProcessorFixture, mixLoadTest){
 		EXPECT_EQ(i, rdeque.at(i).getValue());
 	}
 	//free resource
-	delete insertReqs;
-	delete readReqs;
+	delete [] insertReqs;
+	delete [] readReqs;
 
 	boost::filesystem::path p("D:\\LSM\\MixLoad\\0_4095-4");
 	boost::filesystem::remove_all(p);
 	
 }
 
-TEST_F(SingleProcessorFixture, RepeatedTest){
+TEST(SingleProcessorFixture, RepeatedTest){
 	
 	RangePredicate<int> *rangePredicate;
 	rangePredicate = new RangePredicate<int>(0, 1000000);
@@ -204,7 +219,7 @@ TEST_F(SingleProcessorFixture, RepeatedTest){
 		processor.consume(requests[i]);
 	}
 
-	delete requests;
+	delete [] requests;
 
 	generateInsertRequest(size, 1024, requests);
 
@@ -213,7 +228,7 @@ TEST_F(SingleProcessorFixture, RepeatedTest){
 		processor.consume(requests[i]);
 	}
 
-	delete requests;
+	delete [] requests;
 
 	processor.execute(); 
 
@@ -222,3 +237,131 @@ TEST_F(SingleProcessorFixture, RepeatedTest){
 
 }
 
+TEST_F(TradeOffStudy, TradeOff_readAbit){
+ 
+	RangePredicate<int> *rangePred;
+	rangePred = new RangePredicate<int>(0, 30000);
+
+	Processor<int, int> processor(1024, 1, "D:\\LSM\\MixLoad", MergeType::DEVICE, rangePred);
+
+	//create read requests
+	Request<int, int> *ptr;
+	generateReadRequest(1, 500, ptr);
+	processor.consume(ptr[0]);
+	delete[] ptr;
+
+	generateReadRequest(1, 3000, ptr);
+	processor.consume(ptr[0]);
+	delete[] ptr;
+
+	generateReadRequest(1, 9000, ptr);
+	processor.consume(ptr[0]);
+	delete[] ptr;
+
+	generateReadRequest(1, 25000, ptr);
+	processor.consume(ptr[0]);
+	delete[] ptr;
+
+	//execute
+	processor.execute();
+
+	//verify contents
+	std::deque<Request<int, int>> rst = processor.getQueryWork();
+	EXPECT_EQ(500, rst.at(0).getValue());
+	EXPECT_EQ(3000, rst.at(1).getValue());
+	EXPECT_EQ(9000, rst.at(2).getValue());
+	EXPECT_EQ(25000, rst.at(3).getValue()); 
+}
+
+TEST_F(TradeOffStudy, TradeOff_readAlot){
+
+	RangePredicate<int> *rangePred;
+	rangePred = new RangePredicate<int>(0, 30000);
+
+	Processor<int, int> processor(1024, 1, "D:\\LSM\\MixLoad", MergeType::DEVICE, rangePred);
+
+	//create read requests
+	Request<int, int> *ptr;
+	generateReadRequest(100, 500, ptr);
+	for (int i = 0; i < 100; i++) processor.consume(ptr[i]);
+	delete[] ptr;
+
+	generateReadRequest(100, 3000, ptr);
+	for (int i = 0; i < 100; i++) processor.consume(ptr[i]);
+	delete[] ptr;
+
+	generateReadRequest(100, 9000, ptr);
+	for (int i = 0; i < 100; i++) processor.consume(ptr[i]);
+	delete[] ptr;
+
+	generateReadRequest(100, 25000, ptr);
+	for (int i = 0; i < 100; i++) processor.consume(ptr[i]);
+	delete[] ptr;
+
+	//execute
+	processor.execute();
+
+	//verify contents
+	std::deque<Request<int, int>> rst = processor.getQueryWork();
+	EXPECT_EQ(400, rst.size());
+
+}
+
+TEST_F(TradeOffStudy, TradeOff_updateAbit){
+	
+	RangePredicate<int> *rangePred;
+	rangePred = new RangePredicate<int>(0, 30000);
+
+	Processor<int, int> processor(1024, 1, "D:\\LSM\\MixLoad", MergeType::DEVICE, rangePred);
+
+	//create read requests
+	Request<int, int> *ptr;
+	generateInsertRequest(1, 500, ptr);
+	processor.consume(ptr[0]);
+	delete[] ptr;
+
+	generateInsertRequest(1, 3000, ptr);
+	processor.consume(ptr[0]);
+	delete[] ptr;
+
+	generateInsertRequest(1, 9000, ptr);
+	processor.consume(ptr[0]);
+	delete[] ptr;
+
+	generateInsertRequest(1, 25000, ptr);
+	processor.consume(ptr[0]);
+	delete[] ptr;
+
+	processor.execute();
+}
+
+
+TEST_F(TradeOffStudy, TradeOff_updateAlot){
+
+	RangePredicate<int> *rangePred;
+	rangePred = new RangePredicate<int>(0, 30000);
+
+	Processor<int, int> processor(1024, 1, "D:\\LSM\\MixLoad", MergeType::DEVICE, rangePred);
+
+	//create read requests
+	Request<int, int> *ptr;
+	generateInsertRequest(100, 0, ptr);
+	for (int i = 0; i < 100; i++) processor.consume(ptr[i]);
+	delete[] ptr;
+	
+	generateInsertRequest(100, 2048, ptr);
+	for (int i = 0; i < 100; i++) processor.consume(ptr[i]);
+	delete[] ptr;
+	
+	generateInsertRequest(100, 8192, ptr);
+	for (int i = 0; i < 100; i++) processor.consume(ptr[i]);
+	delete[] ptr;
+	
+	generateInsertRequest(100, 20480, ptr);
+	for (int i = 0; i < 100; i++) processor.consume(ptr[i]);
+	delete[] ptr;
+	
+	//execute
+	processor.execute();
+
+}

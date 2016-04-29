@@ -38,9 +38,9 @@ TEST(CPUTest, Merge1024Test){
 
 	merger.mergeCPU(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
  
 TEST(CPUTest, Merge2048Test){
@@ -54,9 +54,9 @@ TEST(CPUTest, Merge2048Test){
 
 	merger.mergeCPU(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(CPUTest, Merge4096Test){
@@ -70,9 +70,9 @@ TEST(CPUTest, Merge4096Test){
 
 	merger.mergeCPU(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(CPUTest, Merge8192Test){
@@ -86,9 +86,9 @@ TEST(CPUTest, Merge8192Test){
 
 	merger.mergeCPU(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 
@@ -103,9 +103,9 @@ TEST(CPUTest, Merge16384Test){
 
 	merger.mergeCPU(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(CPUTest, Merge32768Test){
@@ -119,9 +119,9 @@ TEST(CPUTest, Merge32768Test){
 
 	merger.mergeCPU(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(CPUTest, Merge65536Test){
@@ -135,9 +135,9 @@ TEST(CPUTest, Merge65536Test){
 
 	merger.mergeCPU(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(CPUTest, Merge131072Test){
@@ -151,9 +151,9 @@ TEST(CPUTest, Merge131072Test){
 
 	merger.mergeCPU(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(CPUTest, Merge262144Test){
@@ -167,9 +167,9 @@ TEST(CPUTest, Merge262144Test){
 
 	merger.mergeCPU(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(CPUTest, Merge524288Test){
@@ -183,9 +183,9 @@ TEST(CPUTest, Merge524288Test){
 
 	merger.mergeCPU(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(CPUTest, Merge1048576Test){
@@ -199,9 +199,9 @@ TEST(CPUTest, Merge1048576Test){
 
 	merger.mergeCPU(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(CPUTest, Merge2097152Test){
@@ -215,9 +215,9 @@ TEST(CPUTest, Merge2097152Test){
 
 	merger.mergeCPU(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(CPUTest, Merge4194304Test){
@@ -231,9 +231,9 @@ TEST(CPUTest, Merge4194304Test){
 
 	merger.mergeCPU(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(CPUTest, Merge8388608Test){
@@ -247,7 +247,7 @@ TEST(CPUTest, Merge8388608Test){
 
 	merger.mergeCPU(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }

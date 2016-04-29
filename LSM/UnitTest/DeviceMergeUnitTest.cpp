@@ -39,9 +39,9 @@ TEST(GPUTest, Merge1024Test){
 
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol); 
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 
@@ -56,9 +56,9 @@ TEST(GPUTest, Merge2048Test){
 
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
  
@@ -74,9 +74,9 @@ TEST(GPUTest, Merge4096Test){
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(GPUTest, Merge8192Test){
@@ -91,9 +91,9 @@ TEST(GPUTest, Merge8192Test){
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(GPUTest, Merge16384Test){
@@ -107,10 +107,9 @@ TEST(GPUTest, Merge16384Test){
 
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(GPUTest, Merge32768Test){
@@ -124,10 +123,9 @@ TEST(GPUTest, Merge32768Test){
 
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(GPUTest, Merge65536Test){
@@ -141,10 +139,9 @@ TEST(GPUTest, Merge65536Test){
 
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(GPUTest, Merge131072Test){
@@ -158,9 +155,9 @@ TEST(GPUTest, Merge131072Test){
 
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(GPUTest, Merge262144Test){
@@ -174,9 +171,9 @@ TEST(GPUTest, Merge262144Test){
 
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(GPUTest, Merge524288Test){
@@ -190,9 +187,9 @@ TEST(GPUTest, Merge524288Test){
 
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(GPUTest, Merge1048576Test){
@@ -206,9 +203,9 @@ TEST(GPUTest, Merge1048576Test){
 
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(GPUTest, Merge2097152Test){
@@ -222,9 +219,9 @@ TEST(GPUTest, Merge2097152Test){
 
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 } 
 
 TEST(GPUTest, Merge4194304Test){
@@ -238,9 +235,9 @@ TEST(GPUTest, Merge4194304Test){
 
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
 
 TEST(GPUTest, Merge8388608Test){
@@ -254,7 +251,7 @@ TEST(GPUTest, Merge8388608Test){
 
 	merger.invokeGPUmerge(arrA, size, arrB, size, sol);
 
-	delete arrA;
-	delete arrB;
-	delete sol;
+	delete [] arrA;
+	delete [] arrB;
+	delete [] sol;
 }
