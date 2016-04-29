@@ -70,10 +70,10 @@ public:
 			this->work.pop_front();
 		} 
 		 
-		//invoke check query
+		//process inquiry related requests
 		this->merger->query(this->queryQueue);
 
-		//invoke merge 
+		//process insert related requests
 		this->merger->merge();
 		  
 	};

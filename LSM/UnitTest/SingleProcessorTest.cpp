@@ -237,6 +237,9 @@ TEST(SingleProcessorFixture, RepeatedTest){
 
 }
 
+TEST_F(TradeOffStudy, baseCase){
+}
+
 TEST_F(TradeOffStudy, TradeOff_readAbit){
  
 	RangePredicate<int> *rangePred;
