@@ -47,26 +47,14 @@ template<typename T, typename P> __global__ void merge(Request<T, P>* arrA, Requ
 
 	if (tid < arrSize){
 
-		int offset = 1024;
-		int workIdx = tid;
-		
 		int Apos;
-		T key;
 
-		//move by thread idx
-		while (workIdx < arrSize){
-			
-			key = arrB[workIdx].getKey();
+		T key = arrB[tid].getKey();
 			 
-			DBsearch<T, P>(arrA, 0, arrSize, key, Apos);
+		DBsearch<T, P>(arrA, 0, arrSize, key, Apos);
 
-			arrIdx[workIdx] += Apos;
-  
-			//increment w 
-			workIdx = workIdx + offset;
-		} 
+		arrIdx[tid] += Apos;
 	}
-	 
 }
 
 template<typename T, typename P> void CudaDevice<T, P>::mergeKernel(Request<T, P>* &arrayA, int arrASize, Request<T, P>* &arrayB, int* &indices, int size){
@@ -89,7 +77,10 @@ template<typename T, typename P> void CudaDevice<T, P>::mergeKernel(Request<T, P
 	cudaMemcpy(idx_d, indices, size * sizeof(int), cudaMemcpyHostToDevice);
 
 	//invoke kernel 
-	merge<T, P> << <32, 32 >> >(d_arrayA, d_arrayB, idx_d, arrASize);
+	int threadPerBlock = 64;
+	int numBlocks = (arrASize + 1) / threadPerBlock;
+
+	merge<T, P> << <numBlocks, threadPerBlock >> >(d_arrayA, d_arrayB, idx_d, arrASize);
 
 	//move data back to host
 	cudaMemcpy(indices, idx_d, (size * sizeof(int)), cudaMemcpyDeviceToHost);
