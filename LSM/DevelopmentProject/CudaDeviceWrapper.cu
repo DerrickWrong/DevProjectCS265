@@ -74,7 +74,7 @@ template<typename T, typename P> void CudaDevice<T, P>::mergeKernel(Request<T, P
 
 	//invoke kernel 
 	int threadPerBlock = 64;
-	int numBlocks = (arrASize + 1) / threadPerBlock;
+	int numBlocks = (arrASize / threadPerBlock) + 1;
 
 	merge<T, P> << <numBlocks, threadPerBlock >> >(d_arrayA, d_arrayB, idx_d, arrASize);
 
