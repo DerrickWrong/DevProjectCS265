@@ -1,8 +1,6 @@
 #include "CudaDevice.h"   
 #include "cuda_runtime.h"  
 
-#include <iostream>
-
 template<typename T, typename P> CudaDevice<T, P>::CudaDevice(){
 }
   
@@ -14,8 +12,6 @@ template<typename T, typename P> bool CudaDevice<T, P>::isCudaAvailable(){
 
 	return (numDevice > 0);
 }
-
-
 
 template<typename T, typename P> __device__  void DBsearch(Request<T, P>* arrA, int startPos, int endPos, T &key, int &idx){
 
@@ -57,7 +53,7 @@ template<typename T, typename P> __global__ void merge(Request<T, P>* arrA, Requ
 	}
 }
 
-template<typename T, typename P> void CudaDevice<T, P>::mergeKernel(Request<T, P>* &arrayA, int arrASize, Request<T, P>* &arrayB, int* &indices, int size){
+template<typename T, typename P> void CudaDevice<T, P>::mergeKernel(Request<T, P>* arrayA, int arrASize, Request<T, P>* arrayB, int* indices, int size){
 	
 	int *idx_d;
 	Request<T, P> *d_arrayA = 0;
